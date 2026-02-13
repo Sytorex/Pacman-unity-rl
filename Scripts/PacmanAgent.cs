@@ -49,29 +49,24 @@ public class PacmanAgent : Agent
         int action = actions.DiscreteActions[0];
         Vector3 dir = Vector3.zero;
 
-        if (action == 1) dir = Vector3.up;
-        else if (action == 2) dir = Vector3.down;
-        else if (action == 3) dir = Vector3.left;
-        else if (action == 4) dir = Vector3.right;
+        if (action == 0) dir = Vector3.up;
+        else if (action == 1) dir = Vector3.down;
+        else if (action == 2) dir = Vector3.left;
+        else if (action == 3) dir = Vector3.right;
 
-        if (dir != Vector3.zero)
+            
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, wallLayer);
+
+        if (hit.collider == null)
         {
-            // Raycast pour vérifier si la case cible est un mur
-            // On vérifie sur une distance de 1 unité
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, wallLayer);
-
-            if (hit.collider == null)
-            {
-                targetPosition = transform.position + dir;
-                StartCoroutine(SmoothMove());
-            }
-            else
-            {
-                // Si c'est un mur, on ne fait rien, l'Heuristic 
-                // choisira une autre direction au prochain cycle.
-                Debug.Log("Mur détecté en : " + dir);
-            }
+            targetPosition = transform.position + dir;
+            StartCoroutine(SmoothMove());
         }
+        else
+        {
+            Debug.Log("Mur détecté en : " + dir);
+        }
+        
     }
 
     System.Collections.IEnumerator SmoothMove()

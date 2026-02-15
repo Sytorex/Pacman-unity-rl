@@ -38,7 +38,7 @@ public class PacmanAgent : Agent
         // On force une direction aléatoire constante tant qu'on ne bouge pas
         if (!isMoving)
         {
-            discreteActions[0] = Random.Range(1, 5);
+            discreteActions[0] = Random.Range(0, 4); // 0=Up, 1=Down, 2=Left, 3=Right
         }
     }
 
@@ -48,25 +48,25 @@ public class PacmanAgent : Agent
 
         int action = actions.DiscreteActions[0];
         Vector3 dir = Vector3.zero;
+        float rotation = 0f;
 
-        if (action == 0) dir = Vector3.up;
-        else if (action == 1) dir = Vector3.down;
-        else if (action == 2) dir = Vector3.left;
-        else if (action == 3) dir = Vector3.right;
+        if (action == 0) { dir = Vector3.up; rotation = 90f; }
+        else if (action == 1) { dir = Vector3.down; rotation = -90f; }
+        else if (action == 2) { dir = Vector3.left; rotation = 180f; }
+        else if (action == 3) { dir = Vector3.right; rotation = 0f; }
 
-            
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, wallLayer);
 
         if (hit.collider == null)
         {
             targetPosition = transform.position + dir;
+            transform.eulerAngles = new Vector3(0, 0, rotation);
             StartCoroutine(SmoothMove());
         }
         else
         {
             Debug.Log("Mur détecté en : " + dir);
         }
-        
     }
 
     System.Collections.IEnumerator SmoothMove()

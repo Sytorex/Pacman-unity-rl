@@ -81,7 +81,6 @@ public class LevelGenerator : MonoBehaviour
             Vector2Int pos = ghostPositions[i];
             Vector3 localPos = new Vector3(pos.x + 0.5f, -pos.y + 0.5f, 0);
             Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
-
         }
     }
 

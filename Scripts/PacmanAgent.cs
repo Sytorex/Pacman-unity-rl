@@ -2,10 +2,13 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using TMPro;
 
 public class PacmanAgent : Agent
 {
     public float moveSpeed = 5f;
+    public int score = 0;
+    [SerializeField] private TextMeshProUGUI scoreText;
     private Vector3 targetPosition;
     private bool isMoving = false;
 
@@ -34,38 +37,36 @@ public class PacmanAgent : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
+        if (isMoving) return;
         var discreteActions = actionsOut.DiscreteActions;
-        // On force une direction aléatoire constante tant qu'on ne bouge pas
-        if (!isMoving)
-        {
-            discreteActions[0] = Random.Range(0, 4); // 0=Up, 1=Down, 2=Left, 3=Right
-        }
+        // discreteActions[0] = Random.Range(1, 5); // 1=Up, 2=Down, 3=Left, 4=Right
+
+        // Contrôle manuel pour les tests
+        if (Input.GetKey(KeyCode.UpArrow)) { discreteActions[0] = 1; }
+        else if (Input.GetKey(KeyCode.DownArrow)) { discreteActions[0] = 2; }
+        else if (Input.GetKey(KeyCode.LeftArrow)) { discreteActions[0] = 3; }
+        else if (Input.GetKey(KeyCode.RightArrow)) { discreteActions[0] = 4; }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
     {
-        if (isMoving || !isReady ) return;
+        if (isMoving || !isReady || actions.DiscreteActions[0] == 0) return;
 
         int action = actions.DiscreteActions[0];
         Vector3 dir = Vector3.zero;
         float rotation = 0f;
 
-        if (action == 0) { dir = Vector3.up; rotation = 90f; }
-        else if (action == 1) { dir = Vector3.down; rotation = -90f; }
-        else if (action == 2) { dir = Vector3.left; rotation = 180f; }
-        else if (action == 3) { dir = Vector3.right; rotation = 0f; }
+        if (action == 1) { dir = Vector3.up; rotation = 90f; }
+        else if (action == 2) { dir = Vector3.down; rotation = -90f; }
+        else if (action == 3) { dir = Vector3.left; rotation = 180f; }
+        else if (action == 4) { dir = Vector3.right; rotation = 0f; }
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, wallLayer);
-
         if (hit.collider == null)
         {
             targetPosition = transform.position + dir;
             transform.eulerAngles = new Vector3(0, 0, rotation);
             StartCoroutine(SmoothMove());
-        }
-        else
-        {
-            Debug.Log("Mur détecté en : " + dir);
         }
     }
 
@@ -79,5 +80,33 @@ public class PacmanAgent : Agent
         }
         transform.position = targetPosition;
         isMoving = false;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("pacman_pellet") == true)
+        {
+            AddReward(10f);
+            AddScore(10);
+            other.gameObject.SetActive(false);
+        } else if (other.CompareTag("pacman_power_pellet") == true)
+        {
+            AddReward(50f);
+            AddScore(50);
+            other.gameObject.SetActive(false);
+        }
+         else if (other.CompareTag("pacman_ghost") == true)
+        {
+            AddReward(-100f);
+            AddScore(-100);
+        }
+    }
+
+    private void AddScore(int amount)
+    {
+        score += amount;
+        if (scoreText != null) {
+            scoreText.text = "Score: " + score.ToString();
+        }
     }
 }

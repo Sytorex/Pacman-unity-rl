@@ -11,12 +11,17 @@ public class PacmanAgent : Agent
     [SerializeField] private TextMeshProUGUI scoreText;
     private Vector3 targetPosition;
     private bool isMoving = false;
+    private int nextAction = 0;
 
     // Assigne le layer "Walls" dans l'inspecteur
     public LayerMask wallLayer;
 
     public override void OnEpisodeBegin()
     {
+        FindObjectOfType<LevelGenerator>().ResetLevel();
+
+        nextAction = 0;
+        currentMoveDir = Vector3.zero;
 
         Vector2Int startPos = LevelData.PacmanStartPosition;
 
@@ -36,40 +41,48 @@ public class PacmanAgent : Agent
 
     public override void Heuristic(in ActionBuffers actionsOut)
     {
-        if (isMoving) return;
         var discreteActions = actionsOut.DiscreteActions;
-        // discreteActions[0] = Random.Range(1, 5); // 1=Up, 2=Down, 3=Left, 4=Right
 
-        // Contrôle manuel pour les tests
-        if (Input.GetKey(KeyCode.UpArrow)) { discreteActions[0] = 1; }
-        else if (Input.GetKey(KeyCode.DownArrow)) { discreteActions[0] = 2; }
-        else if (Input.GetKey(KeyCode.LeftArrow)) { discreteActions[0] = 3; }
-        else if (Input.GetKey(KeyCode.RightArrow)) { discreteActions[0] = 4; }
+        // On capture la nouvelle direction, mais on ne l'applique pas encore forcément
+        if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.UpArrow)) nextAction = 1;
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) nextAction = 2;
+        else if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftArrow)) nextAction = 3;
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) nextAction = 4;
+
+        discreteActions[0] = nextAction;
     }
-
+    private Vector3 currentMoveDir = Vector3.zero;
     public override void OnActionReceived(ActionBuffers actions)
     {
-        if (isMoving || !isReady || actions.DiscreteActions[0] == 0) return;
+        if (isMoving || !isReady) return;
 
         int action = actions.DiscreteActions[0];
-        Vector3 dir = Vector3.zero;
+        Vector3 wantedDir = Vector3.zero;
         float rotation = 0f;
+        if (action == 1) { wantedDir = Vector3.up; rotation = 90f; }
+        else if (action == 2) { wantedDir = Vector3.down; rotation = -90f; }
+        else if (action == 3) { wantedDir = Vector3.left; rotation = 180f; }
+        else if (action == 4) { wantedDir = Vector3.right; rotation = 0f; }
 
-        if (action == 1) { dir = Vector3.up; rotation = 90f; }
-        else if (action == 2) { dir = Vector3.down; rotation = -90f; }
-        else if (action == 3) { dir = Vector3.left; rotation = 180f; }
-        else if (action == 4) { dir = Vector3.right; rotation = 0f; }
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, 1f, wallLayer);
-        if (hit.collider == null)
+        
+        if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.position, wantedDir, 1f, wallLayer))
         {
-            targetPosition = transform.position + dir;
+            currentMoveDir = wantedDir;
             transform.eulerAngles = new Vector3(0, 0, rotation);
-            StartCoroutine(SmoothMove());
         }
-        else
+
+        if (currentMoveDir != Vector3.zero)
         {
-            AddReward(-0.1f); // Petite pénalité pour tenter de traverser un mur
+            if (!Physics2D.Raycast(transform.position, currentMoveDir, 1f, wallLayer))
+            {
+                targetPosition = transform.position + currentMoveDir;
+                StartCoroutine(SmoothMove());
+            }
+            else
+            {
+                currentMoveDir = Vector3.zero;
+                AddReward(-0.01f);
+            }
         }
     }
 
@@ -103,6 +116,7 @@ public class PacmanAgent : Agent
             Debug.Log("Collision avec un fantôme !");
             AddReward(-100f);
             AddScore(-100);
+
             EndEpisode();
         }
     }

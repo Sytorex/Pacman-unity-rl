@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Collections.Generic;
 
 public class LevelGenerator : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class LevelGenerator : MonoBehaviour
     public GameObject pacmanPrefab;
     public GameObject[] ghostPrefabs; // Blinky, Pinky, Inky, Clyde
 
+    public List<GameObject> allPellets = new List<GameObject>();
     void Start()
     {
         GenerateLevel();
@@ -24,7 +26,7 @@ public class LevelGenerator : MonoBehaviour
     void GenerateLevel()
     {
         int[,] map = LevelData.Map;
-
+        GameObject pellet;
         for (int y = 0; y < map.GetLength(0); y++) 
         {
             for (int x = 0; x < map.GetLength(1); x++)
@@ -44,11 +46,13 @@ public class LevelGenerator : MonoBehaviour
                         break;
 
                     case TileType.Pellet:
-                        Instantiate(pelletPrefab, localPos, Quaternion.identity, transform);
+                        pellet=Instantiate(pelletPrefab, localPos, Quaternion.identity, transform);
+                        allPellets.Add(pellet);
                         break;
 
                     case TileType.PowerPellet:
-                        Instantiate(powerPelletPrefab, localPos, Quaternion.identity, transform);
+                        pellet=Instantiate(powerPelletPrefab, localPos, Quaternion.identity, transform);
+                        allPellets.Add(pellet);
                         break;
                     
                     case TileType.GhostHouseDoor:
@@ -87,5 +91,19 @@ public class LevelGenerator : MonoBehaviour
     void CenterCamera(int width, int height)
     {
         Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -10);
+    }
+
+    public void ResetLevel()
+    {
+        foreach (GameObject pellet in allPellets)
+        {
+            if (pellet != null) pellet.SetActive(true);
+        }
+
+        //GameObject[] ghosts = GameObject.FindGameObjectsWithTag("pacman_ghost");
+        //foreach (GameObject ghost in ghosts)
+        //{
+        //    ghost.GetComponent<ClydeController>().ResetPosition();
+        //}
     }
 }

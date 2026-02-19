@@ -15,16 +15,15 @@ public class PacmanAgent : Agent
     // Assigne le layer "Walls" dans l'inspecteur
     public LayerMask wallLayer;
 
-    public override void Initialize()
+    public override void OnEpisodeBegin()
     {
-        // 1. Aligner Pac-Man parfaitement au centre de la case de départ
-        // Ton LevelGenerator place les objets à x+0.5, -y+0.5
-        transform.position = new Vector3(
-            Mathf.Floor(transform.position.x) + 0.5f,
-            Mathf.Floor(transform.position.y) + 0.5f,
-            0
-        );
+
+        Vector2Int startPos = LevelData.PacmanStartPosition;
+
+        transform.position = new Vector3(startPos.x + 0.5f, -startPos.y + 0.5f, 0);
+
         targetPosition = transform.position;
+        isMoving = false;
     }
 
     // Optionnel : Désactive l'agent pendant 0.1s au réveil pour laisser la physique s'installer
@@ -68,6 +67,10 @@ public class PacmanAgent : Agent
             transform.eulerAngles = new Vector3(0, 0, rotation);
             StartCoroutine(SmoothMove());
         }
+        else
+        {
+            AddReward(-0.1f); // Petite pénalité pour tenter de traverser un mur
+        }
     }
 
     System.Collections.IEnumerator SmoothMove()
@@ -97,8 +100,10 @@ public class PacmanAgent : Agent
         }
          else if (other.CompareTag("pacman_ghost") == true)
         {
+            Debug.Log("Collision avec un fantôme !");
             AddReward(-100f);
             AddScore(-100);
+            EndEpisode();
         }
     }
 

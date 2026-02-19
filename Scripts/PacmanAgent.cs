@@ -12,6 +12,7 @@ public class PacmanAgent : Agent
     private Vector3 targetPosition;
     private bool isMoving = false;
     private int nextAction = 0;
+    private bool isPowerUpActive = false;
 
     // Assigne le layer "Walls" dans l'inspecteur
     public LayerMask wallLayer;
@@ -110,14 +111,24 @@ public class PacmanAgent : Agent
             AddReward(50f);
             AddScore(50);
             other.gameObject.SetActive(false);
+            isPowerUpActive = true;
+            Invoke("DeactivatePowerUp", 8f);
         }
          else if (other.CompareTag("pacman_ghost") == true)
         {
-            Debug.Log("Collision avec un fantôme !");
-            AddReward(-100f);
-            AddScore(-100);
-
-            EndEpisode();
+            if (isPowerUpActive)
+            {
+                AddReward(200f);
+                AddScore(200);
+                other.gameObject.SetActive(false);
+            }
+            else
+            {
+                Debug.Log("Collision avec un fantôme !");
+                AddReward(-100f);
+                AddScore(-100);
+                EndEpisode();
+            }
         }
     }
 
@@ -127,5 +138,10 @@ public class PacmanAgent : Agent
         if (scoreText != null) {
             scoreText.text = "Score: " + score.ToString();
         }
+    }
+
+    private void DeactivatePowerUp()
+    {
+        isPowerUpActive = false;
     }
 }

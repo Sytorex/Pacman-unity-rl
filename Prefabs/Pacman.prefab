@@ -236,12 +236,20 @@ MonoBehaviour:
   - pacman_pellet
   - pacman_power_pellet
   - pacman_wall
+  - Clyde
+  - Blinky
+  - Inky
+  - Pinky
   m_ColliderMask:
     serializedVersion: 2
     m_Bits: 0
   m_MaxColliderBufferSize: 500
   m_InitialColliderBufferSize: 4
   m_DebugColors:
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
   - {r: 0, g: 0, b: 0, a: 0}
   - {r: 0, g: 0, b: 0, a: 0}
   - {r: 0, g: 0, b: 0, a: 0}

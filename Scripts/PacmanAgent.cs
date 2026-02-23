@@ -114,7 +114,7 @@ public class PacmanAgent : Agent
             isPowerUpActive = true;
             Invoke("DeactivatePowerUp", 8f);
         }
-         else if (other.CompareTag("pacman_ghost") == true)
+         else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)
         {
             if (isPowerUpActive)
             {

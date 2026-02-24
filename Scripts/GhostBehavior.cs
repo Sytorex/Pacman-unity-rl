@@ -1,9 +1,16 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GhostBehavior : MonoBehaviour
 {
-    [SerializeField] GhostBase ghost;
+    public GhostBase ghost;
     [SerializeField] private float DefDuration = 5f;
+
+    public float speed = 4f;
+
+    protected Vector3 targetPosition;
+    protected Vector3 lastDirection;
+    protected bool isMoving = false;
     private void Awake()
     {
         if (ghost == null)
@@ -21,21 +28,55 @@ public class GhostBehavior : MonoBehaviour
     //Enable for a duration
     public virtual void Enable(float duration)
     {
-        this.enabled= true;
+        this.enabled = true;
 
         //If new duration is set, reset the timer
         CancelInvoke();
         Invoke(nameof(Disable), duration);
     }
 
-    public virtual void  Disable()
+    public virtual void Disable()
     {
         this.enabled = false;
         CancelInvoke();
     }
 
+    public bool CanGhostMoveTo(Vector3 worldPos)
+    {
+        // Conversion de la position monde en coordonnées tableau (Inversion du Y comme dans ton Generator)
+        int x = Mathf.FloorToInt(worldPos.x);
+        int y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
 
-    GhostBase GetGhostBase()
+        if (y >= 0 && y < LevelData.Map.GetLength(0) && x >= 0 && x < LevelData.Map.GetLength(1))
+        {
+            int cellValue = LevelData.Map[y, x];
+
+            // Clyde peut passer si ce n'est PAS un mur (0)
+            // Il PEUT passer si c'est du vide (1), une pastille (2/3) ou la PORTE (4)
+            return cellValue != (int)TileType.Wall;
+        }
+        return false;
+    }
+
+    protected List<Vector3> AvailableDirection(Vector3 worldPos){
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        List<Vector3> availableDirections = new List<Vector3>();
+
+        foreach (Vector3 dir in directions)
+        {
+            // 1. Éviter le demi-tour immédiat
+            if (dir == -lastDirection && directions.Length > 1) continue;
+            // 2. Vérifier la grille de données au lieu de la physique
+            if (CanGhostMoveTo(transform.position + dir))
+            {
+                availableDirections.Add(dir);
+            }
+        }
+
+        return availableDirections;
+    }
+
+    public GhostBase GetGhostBase()
     {
         if (ghost == null)
         {
@@ -48,4 +89,6 @@ public class GhostBehavior : MonoBehaviour
     {
         this.ghost = ghost;
     }
+
+
 }

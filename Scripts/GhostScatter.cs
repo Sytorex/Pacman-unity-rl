@@ -12,6 +12,7 @@ public class GhostScatter : GhostBehavior
 
     void OnEnable()
     {
+        Debug.Log("scatter mode on " + this.tag);
         ChooseCorner();
         isMoving = false;
     }
@@ -103,6 +104,7 @@ public class GhostScatter : GhostBehavior
     }
     private void OnDisable()
     {
+        Debug.Log("Disable Scatter on "+ this.tag);
         this.ghost.chase.Enable();
     }
 

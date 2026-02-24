@@ -34,7 +34,7 @@ public class GhostBase : MonoBehaviour
         this.gameObject.SetActive(true);
         this.frightened.Disable();
         this.chase.Disable();
-        this.scatter.Enable();
+        this.scatter.Disable();
 
         if (this.home!= this.initialBehavior)
         {

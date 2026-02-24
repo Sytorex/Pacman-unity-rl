@@ -85,10 +85,4 @@ public class GhostBehavior : MonoBehaviour
         return ghost;
     }
 
-    private void set(GhostBase ghost)
-    {
-        this.ghost = ghost;
-    }
-
-
 }

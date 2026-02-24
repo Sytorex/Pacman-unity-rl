@@ -100,9 +100,54 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMovePinky()
     {
-        // Pinky tries to move towards a position 4 tiles ahead of Pacman
-        // Implementation would be similar to Blinky but with a different target position
-        ChooseNextMoveBlinky(); // Placeholder: You would replace this with the actual logic for Pinky
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3 bestDirection = Vector3.zero;
+        float minDistance = float.MaxValue;
+
+        Vector3 currentTargetGoal;
+
+
+        if (pacmanTransform != null)
+        {
+            //on récupère la position de pacman
+            Vector3 pacmanPos = pacmanTransform.position;
+
+            //on récupère la direction de pacman
+            Vector3 pacmanForward = pacmanTransform.right;
+
+            // La cible de Pinky est 4 cases devant Pac-Man
+            currentTargetGoal = pacmanPos + (pacmanForward * 4);
+        }
+        else
+        {
+            currentTargetGoal = transform.position;
+        }
+        // On évalue les 4 directions possibles
+        foreach (Vector3 dir in directions)
+        {
+            // Interdiction de faire demi-tour
+            if (dir == -lastDirection) continue;
+
+            Vector3 potentialStep = transform.position + dir;
+            if (CanGhostMoveTo(potentialStep))
+            {
+                float dist = Vector3.Distance(potentialStep, currentTargetGoal);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    bestDirection = dir;
+                }
+            }
+        }
+
+        if (bestDirection == Vector3.zero) bestDirection = -lastDirection;
+
+        if (bestDirection != Vector3.zero)
+        {
+            lastDirection = bestDirection;
+            targetPosition = transform.position + bestDirection;
+            isMoving = true;
+        }
     }
 
     void ChooseNextMoveInky()

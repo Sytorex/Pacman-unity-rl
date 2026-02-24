@@ -41,7 +41,7 @@ public class LevelData
 
     public static Vector2Int[] GhostStartPositions = new Vector2Int[]
     {
-        new Vector2Int(12, 14), // Blinky
+        new Vector2Int(14, 11), // Blinky
         new Vector2Int(13, 14), // Pinky
         new Vector2Int(14, 14), // Inky
         new Vector2Int(15, 14)  // Clyde

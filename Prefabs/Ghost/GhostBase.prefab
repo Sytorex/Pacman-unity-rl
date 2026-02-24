@@ -380,7 +380,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   points: 200
-  GhostName: 
   home: {fileID: 0}
   scatter: {fileID: 0}
   chase: {fileID: 0}
@@ -394,13 +393,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7502455431290236588}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8a054a1abc866c840b188d624cd85e29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
   DefDuration: 5
+  speed: 4
 --- !u!114 &7919773192397291047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -414,7 +414,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
-  DefDuration: 5
+  DefDuration: 20
+  speed: 4
 --- !u!114 &2584891397817974106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,7 +429,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
-  DefDuration: 5
+  DefDuration: 8
+  speed: 4
 --- !u!114 &3210674902267120338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -442,7 +444,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
-  DefDuration: 5
+  DefDuration: 7
+  speed: 4
 --- !u!114 &3924116294310788844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +460,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
   DefDuration: 5
+  speed: 4
 --- !u!1 &8595823834371454260
 GameObject:
   m_ObjectHideFlags: 0

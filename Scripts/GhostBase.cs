@@ -4,14 +4,13 @@ public class GhostBase : MonoBehaviour
 {
     
     public int points = 200;
-    [SerializeField] private string GhostName;
 
-    [SerializeField] GhostHome home;
-    [SerializeField] GhostScatter scatter;
-    [SerializeField] GhostChase chase;
-    [SerializeField] GhostFrightened frightened;
+    public GhostHome home;
+    public GhostScatter scatter;
+    public GhostChase chase;
+    public GhostFrightened frightened;
 
-    [SerializeField] GhostBehavior initialBehavior;
+    public GhostBehavior initialBehavior;
     [SerializeField] Transform Pacman;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -20,27 +19,7 @@ public class GhostBase : MonoBehaviour
         this.scatter = GetComponent<GhostScatter>();
         this.chase = GetComponent<GhostChase>();
         this.frightened = GetComponent<GhostFrightened>();
-        this.GhostName = gameObject.name;
-
-        //color of the ghost based on its name
-        //switch (GhostName.ToLower())
-        //{
-        //    case "blinky":
-        //        GetComponent<SpriteRenderer>().color = Color.red;
-        //        break;
-        //    case "pinky":
-        //        GetComponent<SpriteRenderer>().color = Color.magenta;
-        //        break;
-        //    case "inky":
-        //        GetComponent<SpriteRenderer>().color = Color.cyan;
-        //        break;
-        //    case "clyde":
-        //        GetComponent<SpriteRenderer>().color = new Color(1f, 0.5f, 0f); // Orange
-        //        break;
-        //     default:
-        //        break;
-        //}
-    }
+    }    
 
     // Update is called once per frame
     void Start()

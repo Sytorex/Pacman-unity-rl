@@ -5,6 +5,7 @@ public class GhostChase : GhostBehavior
 {
     string ghostTag;
     private Transform pacmanTransform;
+    private Transform blinkyTransform;
 
     private void OnDisable()
     {
@@ -21,6 +22,9 @@ public class GhostChase : GhostBehavior
         //We will need to always know where pacman is
         GameObject pacman = GameObject.FindGameObjectWithTag("pacman_player");
         if (pacman != null) pacmanTransform = pacman.transform;
+
+        GameObject blinky = GameObject.FindGameObjectWithTag("Blinky");
+        if (blinky != null) blinkyTransform = blinky.transform;
 
         //Alignement initial sur la grille
         targetPosition = new Vector3(
@@ -152,9 +156,56 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMoveInky()
     {
-        // Inky's behavior is more complex and depends on both Pacman's position and Blinky's position
-        // Implementation would require tracking Blinky's position and calculating a target based on both
-        ChooseNextMoveBlinky(); // Placeholder: You would replace this with the actual logic for Inky
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3 bestDirection = Vector3.zero;
+        float minDistance = float.MaxValue;
+        Vector3 targetGoal;
+
+        if (pacmanTransform != null && blinkyTransform != null)
+        {
+            
+            Vector3 pacmanForward = pacmanTransform.right;
+            Vector3 intermediatePoint = pacmanTransform.position + (pacmanForward * 2);
+
+            Vector3 vectorFromBlinky = intermediatePoint - blinkyTransform.position;
+
+            targetGoal = blinkyTransform.position + (vectorFromBlinky * 2);
+            Debug.Log("Inky a trouvé Pacman et Blinky. Cible : " + targetGoal);
+        }
+        else
+        {
+            Debug.LogWarning("Inky est perdu ! Pacman : " + pacmanTransform + " | Blinky : " + blinkyTransform);
+            targetGoal = (pacmanTransform != null) ? pacmanTransform.position : transform.position;
+        }
+
+        foreach (Vector3 dir in directions)
+        {
+            if (dir == -lastDirection) continue;
+
+            Vector3 potentialStep = transform.position + dir;
+            if (CanGhostMoveTo(potentialStep))
+            {
+                float dist = Vector3.Distance(potentialStep, targetGoal);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    bestDirection = dir;
+                }
+            }
+        }
+
+        if (bestDirection == Vector3.zero)
+        {
+            bestDirection = -lastDirection;
+            Debug.LogError("Inky ne trouve aucune direction valide !");
+        }
+
+        if (bestDirection != Vector3.zero)
+        {
+            lastDirection = bestDirection;
+            targetPosition = transform.position + bestDirection;
+            isMoving = true;
+        }
     }
 
     void ChooseNextMoveClyde()

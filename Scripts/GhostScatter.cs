@@ -12,6 +12,7 @@ public class GhostScatter : GhostBehavior
 
     void OnEnable()
     {
+        this.ghost.home.Disable();
         Debug.Log("scatter mode on " + this.tag);
         ChooseCorner();
         isMoving = false;

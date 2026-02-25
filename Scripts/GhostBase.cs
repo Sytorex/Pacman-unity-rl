@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class GhostBase : MonoBehaviour
@@ -12,7 +13,13 @@ public class GhostBase : MonoBehaviour
 
     public GhostBehavior initialBehavior;
     [SerializeField] Transform Pacman;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private Vector3 BlinkyInitialPosition = new Vector3(14.5f,-11.5f); // Blinky
+    private Vector3 PinkyInitialPosition = new Vector3(13.5f, -13.5f); // Pinky
+    private Vector3 InkyInitialPosition = new Vector3(14.5f, -13.5f); // Inky
+    private Vector3 ClydeInitialPosition = new Vector3(13.5f, -13.5f);  // Clyde
+
+
     void Awake()
     {
         this.home = GetComponent<GhostHome>();
@@ -27,24 +34,43 @@ public class GhostBase : MonoBehaviour
         ResetState();
     }
 
-    
+
 
     public void ResetState()
     {
-        this.gameObject.SetActive(true);
-        this.frightened.Disable();
-        this.chase.Disable();
-        this.scatter.Disable();
+        gameObject.SetActive(true);
 
-        if (this.home!= this.initialBehavior)
+        home.enabled = false;
+        chase.enabled = false;
+        scatter.enabled = false;
+        frightened.enabled = false;
+
+        ResetPosition();
+
+        if (initialBehavior != null)
         {
-            this.home.Disable();
-        }
-        if(this.initialBehavior != null)
-        {
-            this.initialBehavior.Enable();
+            Debug.Log("Enabling initial behavior: " + initialBehavior.GetType().Name);
+
+            initialBehavior.Enable();
         }
     }
 
-
+    public void ResetPosition() { 
+        if (this.tag =="Blinky")
+        {
+            transform.position = BlinkyInitialPosition;
+        }
+        else if (this.tag == "Pinky")
+        {
+            transform.position = PinkyInitialPosition;
+        }
+        else if (this.tag == "Inky")
+        {
+            transform.position = InkyInitialPosition;
+        }
+        else if (this.tag =="Clyde")
+        {
+            transform.position = ClydeInitialPosition;
+        }
+    }
 }

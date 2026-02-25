@@ -58,6 +58,16 @@ PrefabInstance:
       propertyPath: initialBehavior
       value: 
       objectReference: {fileID: 891297888700267698}
+    - target: {fileID: 2584891397817974106, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: ghost
+      value: 
+      objectReference: {fileID: 3394132104955379028}
+    - target: {fileID: 3210674902267120338, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: ghost
+      value: 
+      objectReference: {fileID: 3394132104955379028}
     - target: {fileID: 3924116294310788844, guid: e083450357024454a9d9f9f81e2ca6dc,
         type: 3}
       propertyPath: ghost
@@ -208,6 +218,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TagString
       value: Inky
+      objectReference: {fileID: 0}
+    - target: {fileID: 7919773192397291047, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: ghost
+      value: 
+      objectReference: {fileID: 3394132104955379028}
+    - target: {fileID: 7919773192397291047, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7940519253166633535, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: ghost
+      value: 
+      objectReference: {fileID: 3394132104955379028}
+    - target: {fileID: 7940519253166633535, guid: e083450357024454a9d9f9f81e2ca6dc,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

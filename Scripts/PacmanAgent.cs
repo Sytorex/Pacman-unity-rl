@@ -113,6 +113,12 @@ public class PacmanAgent : Agent
             other.gameObject.SetActive(false);
             isPowerUpActive = true;
             Invoke("DeactivatePowerUp", 8f);
+
+            GhostBase[] ghosts = FindObjectsOfType<GhostBase>();
+            foreach (GhostBase ghost in ghosts)
+            {
+                if(!ghost.home.enabled)ghost.frightened.Enable(8f);
+            }
         }
          else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)
         {
@@ -120,7 +126,7 @@ public class PacmanAgent : Agent
             {
                 AddReward(200f);
                 AddScore(200);
-                other.gameObject.SetActive(false);
+                other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
             else
             {

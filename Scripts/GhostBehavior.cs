@@ -1,10 +1,11 @@
-using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GhostBehavior : MonoBehaviour
 {
     public GhostBase ghost;
-    [SerializeField] private float DefDuration = 5f;
+    public float DefDuration = 5f;
 
     public float speed = 4f;
 
@@ -25,7 +26,7 @@ public class GhostBehavior : MonoBehaviour
     {
         Enable(DefDuration);
     }
-    //Enable for a duration
+    ////Enable for a duration
     public virtual void Enable(float duration)
     {
         this.enabled = true;
@@ -33,6 +34,18 @@ public class GhostBehavior : MonoBehaviour
         //If new duration is set, reset the timer
         CancelInvoke();
         Invoke(nameof(Disable), duration);
+    }
+    //public virtual void Enable(float duration)
+    //{
+    //    enabled = true;
+    //    //StopAllCoroutines();
+    //    StartCoroutine(DisableAfter(duration));
+    //}
+
+    IEnumerator DisableAfter(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        Disable();
     }
 
     public virtual void Disable()

@@ -22,7 +22,7 @@ public class GhostFrightened : GhostBehavior
         //if (this.ghost.chase.enabled) isChase = true;
         //this.ghost.chase.Disable();
         //this.ghost.scatter.Disable();
-        if(this.ghost.frightened.enabled)this.ghost.home.Enable(duration + 1f); // Ensure if ghost is home it stays home for the entire frightened duration
+        //if(this.ghost.frightened.enabled)this.ghost.home.Enable(duration + 1f); // Ensure if ghost is home it stays home for the entire frightened duration
         Invoke(nameof(Flash), duration * 0.5f); // Flash halfway through the frightened duration
     }
 
@@ -52,10 +52,18 @@ public class GhostFrightened : GhostBehavior
     {
         speed = 2f; // Reduce speed when frightened
         this.eaten = false; // Reset eaten state when frightened mode starts
+        if (ghost.home.enabled)
+        {
+            // no new Ghost gets out during frightened mode, but if a ghost is already in the home when frightened mode starts, it should stay there for the entire duration of frightened mode
+            //ghost.home.Enable(ghost.home.DefDuration + 8f);
+            ghost.home.AddDuration(9f);
+              
+            return;
+        }
         if (this.ghost.chase.enabled) isChase = true;
         else isChase = false;
-        //this.ghost.chase.Disable(); // Ensure chase mode is off when frightened
-        //this.ghost.scatter.Disable(); // Ensure scatter mode is off when frightened
+        this.ghost.chase.Disable(); // Ensure chase mode is off when frightened
+        this.ghost.scatter.Disable(); // Ensure scatter mode is off when frightened
     }
 
     private void OnDisable()
@@ -66,15 +74,37 @@ public class GhostFrightened : GhostBehavior
         else this.ghost.scatter.Enable();
     }
 
+    //public void Eaten()
+    //{
+    //    eaten = true;
+    //    body.enabled = false;
+    //    eyes.enabled = true;
+    //    blue.enabled = false;
+    //    white.enabled = false;
+
+    //    this.Disable();
+    //    Debug.Log(ghost.tag + " eaten! Returning to home.");
+    //    ghost.chase.Disable();
+    //    ghost.scatter.Disable();
+    //    this.ghost.home.Enable(8f);
+    //}
     public void Eaten()
     {
         eaten = true;
-        body.enabled = false;
-        eyes.enabled = true;
-        blue.enabled = false;
-        white.enabled = false;
-        this.ghost.ResetPosition(); // Teleport back to the ghost house
+        // ... (tes changements de sprites)
+
+        Debug.Log(ghost.tag + " eaten! Returning to home.");
+
+        // On coupe tout
+        this.ghost.chase.Disable();
+        this.ghost.scatter.Disable();
+
+        // On force le retour à la maison avec une durée fixe
         this.ghost.home.Enable(8f);
+
+        // On désactive Frightened à la fin pour que le fantôme 
+        // reprenne son cycle normal APRES être sorti du home
+        this.Disable();
     }
 
     private void Update()
@@ -82,10 +112,11 @@ public class GhostFrightened : GhostBehavior
         if (!enabled || eaten) return;
         if (!isMoving)
         {
-            ChooseNextMove();
+            ChooseNextMoveFrightened();
         }
         else
         {
+            Debug.Log("Frightened "+ this.ghost.tag+" moving away");
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
             if (Vector3.Distance(transform.position, targetPosition) < 0.001f)
             {
@@ -95,7 +126,7 @@ public class GhostFrightened : GhostBehavior
         }
     }
 
-    void ChooseNextMove()
+    void ChooseNextMoveFrightened()
     {
         Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         List<Vector3> availableDirections = new List<Vector3>();

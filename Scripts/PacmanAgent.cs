@@ -115,9 +115,13 @@ public class PacmanAgent : Agent
             Invoke("DeactivatePowerUp", 8f);
 
             GhostBase[] ghosts = FindObjectsOfType<GhostBase>();
+
             foreach (GhostBase ghost in ghosts)
             {
-                if(!ghost.home.enabled)ghost.frightened.Enable(8f);
+                if (!ghost.home.enabled)
+                {
+                    ghost.frightened.Enable(8f);
+                }
             }
         }
          else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)

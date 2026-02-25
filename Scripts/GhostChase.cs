@@ -10,6 +10,7 @@ public class GhostChase : GhostBehavior
     private void OnDisable()
     {
         Debug.Log("disabling Chase on " + this.tag);
+        if(this.ghost.frightened.enabled) return; // If the ghost is frightened, we don't want to enable scatter or chase
         this.ghost.scatter.Enable();
     }
 
@@ -170,11 +171,11 @@ public class GhostChase : GhostBehavior
             Vector3 vectorFromBlinky = intermediatePoint - blinkyTransform.position;
 
             targetGoal = blinkyTransform.position + (vectorFromBlinky * 2);
-            Debug.Log("Inky a trouvé Pacman et Blinky. Cible : " + targetGoal);
+            //Debug.Log("Inky a trouvé Pacman et Blinky. Cible : " + targetGoal);
         }
         else
         {
-            Debug.LogWarning("Inky est perdu ! Pacman : " + pacmanTransform + " | Blinky : " + blinkyTransform);
+            //Debug.LogWarning("Inky est perdu ! Pacman : " + pacmanTransform + " | Blinky : " + blinkyTransform);
             targetGoal = (pacmanTransform != null) ? pacmanTransform.position : transform.position;
         }
 
@@ -197,7 +198,7 @@ public class GhostChase : GhostBehavior
         if (bestDirection == Vector3.zero)
         {
             bestDirection = -lastDirection;
-            Debug.LogError("Inky ne trouve aucune direction valide !");
+            //Debug.LogError("Inky ne trouve aucune direction valide !");
         }
 
         if (bestDirection != Vector3.zero)

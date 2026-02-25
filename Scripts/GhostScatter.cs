@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GhostScatter : GhostBehavior
 {
-    private Vector3[] topLeftCorner = { new Vector3(1.5, -0.5, 0), new Vector3(1.5, -5, 0), new Vector3(6.5,-5,0), new Vector3(6.5,-0.5,0)};
-    private Vector3[] topRightCorner = { new Vector3(26.5, -0.5, 0) , new Vector3(26.5, -5, 0), new Vector3(21.5,-5,0), new Vector3(21.5,-0.5,0)};
-    private Vector3[] bottomLeftCorner = { new Vector3(1.5, -25.5, 0), new Vector3(1.5, 18, 0), new Vector3(12.5, -25.5, 0), new Vector3(12.5, -28.5, 0) };
-    private Vector3[] bottomRightCorner = { new Vector3(26.5, -28.5, 0), new Vector3(15.5, -28.5, 0), new Vector3(15.5, -25.5, 0), new Vector3(26.5, -25.5, 0) };
+    private Vector3[] topLeftCorner = { new Vector3(1.5f, -0.5f, 0), new Vector3(1.5f, -5, 0), new Vector3(6.5f,-5,0), new Vector3(6.5f,-0.5f,0)};
+    private Vector3[] topRightCorner = { new Vector3(26.5f, -0.5f, 0) , new Vector3(26.5f, -5, 0), new Vector3(21.5f,-5,0), new Vector3(21.5f,-0.5f,0)};
+    private Vector3[] bottomLeftCorner = { new Vector3(1.5f, -25.5f, 0), new Vector3(1.5f, 18, 0), new Vector3(12.5f, -25.5f, 0), new Vector3(12.5f, -28.5f, 0) };
+    private Vector3[] bottomRightCorner = { new Vector3(26.5f, -28.5f, 0), new Vector3(15.5f, -28.5f, 0), new Vector3(15.5f, -25.5f, 0), new Vector3(26.5f, -25.5f, 0) };
 
     private Vector3[] scatterTargetList;
     private Vector3 scatterTarget;
@@ -106,6 +106,7 @@ public class GhostScatter : GhostBehavior
     private void OnDisable()
     {
         Debug.Log("Disable Scatter on "+ this.tag);
+        if(this.ghost.frightened.enabled) return; // If the ghost is frightened, we don't want to enable scatter or chase
         this.ghost.chase.Enable();
     }
 

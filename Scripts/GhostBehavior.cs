@@ -6,6 +6,7 @@ public class GhostBehavior : MonoBehaviour
 {
     public GhostBase ghost;
     public float DefDuration = 5f;
+    private float disableTime;
 
     public float speed = 4f;
 
@@ -29,25 +30,15 @@ public class GhostBehavior : MonoBehaviour
     ////Enable for a duration
     public virtual void Enable(float duration)
     {
+        if (this is not GhostHome && ghost.home.enabled) return;
         this.enabled = true;
-
+        disableTime = Time.time + duration;
         //If new duration is set, reset the timer
+        CancelInvoke(nameof(Disable));
         CancelInvoke();
         Invoke(nameof(Disable), duration);
     }
-    //public virtual void Enable(float duration)
-    //{
-    //    enabled = true;
-    //    //StopAllCoroutines();
-    //    StartCoroutine(DisableAfter(duration));
-    //}
-
-    IEnumerator DisableAfter(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        Disable();
-    }
-
+    
     public virtual void Disable()
     {
         this.enabled = false;
@@ -70,7 +61,12 @@ public class GhostBehavior : MonoBehaviour
         }
         return false;
     }
+    public void AddDuration(float extra)
+    {
+        float remaining = disableTime - Time.time;
 
+        Enable(remaining + extra);
+    }
     protected List<Vector3> AvailableDirection(Vector3 worldPos){
         Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         List<Vector3> availableDirections = new List<Vector3>();
@@ -89,13 +85,5 @@ public class GhostBehavior : MonoBehaviour
         return availableDirections;
     }
 
-    public GhostBase GetGhostBase()
-    {
-        if (ghost == null)
-        {
-            ghost = GetComponent<GhostBase>();
-        }
-        return ghost;
-    }
 
 }

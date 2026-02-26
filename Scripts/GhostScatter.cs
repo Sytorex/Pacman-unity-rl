@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class GhostScatter : GhostBehavior
 {
-    private Vector3[] topLeftCorner = { new Vector3(1.5f, -0.5f, 0), new Vector3(1.5f, -5, 0), new Vector3(6.5f,-5,0), new Vector3(6.5f,-0.5f,0)};
-    private Vector3[] topRightCorner = { new Vector3(26.5f, -0.5f, 0) , new Vector3(26.5f, -5, 0), new Vector3(21.5f,-5,0), new Vector3(21.5f,-0.5f,0)};
-    private Vector3[] bottomLeftCorner = { new Vector3(1.5f, -25.5f, 0), new Vector3(1.5f, 18, 0), new Vector3(12.5f, -25.5f, 0), new Vector3(12.5f, -28.5f, 0) };
-    private Vector3[] bottomRightCorner = { new Vector3(26.5f, -28.5f, 0), new Vector3(15.5f, -28.5f, 0), new Vector3(15.5f, -25.5f, 0), new Vector3(26.5f, -25.5f, 0) };
+    private Vector3[] topLeftCorner = { new Vector3(1.5f, LevelData.DefaultLayerY, -0.5f), new Vector3(1.5f, LevelData.DefaultLayerY, -5f), new Vector3(6.5f, LevelData.DefaultLayerY, -5f), new Vector3(6.5f, LevelData.DefaultLayerY, -0.5f)};
+    private Vector3[] topRightCorner = { new Vector3(26.5f, LevelData.DefaultLayerY, -0.5f) , new Vector3(26.5f, LevelData.DefaultLayerY, -5f), new Vector3(21.5f, LevelData.DefaultLayerY, -5f), new Vector3(21.5f, LevelData.DefaultLayerY, -0.5f)};
+    private Vector3[] bottomLeftCorner = { new Vector3(1.5f, LevelData.DefaultLayerY, -25.5f), new Vector3(1.5f, LevelData.DefaultLayerY, 18f), new Vector3(12.5f, LevelData.DefaultLayerY, -25.5f), new Vector3(12.5f, LevelData.DefaultLayerY, -28.5f) };
+    private Vector3[] bottomRightCorner = { new Vector3(26.5f, LevelData.DefaultLayerY, -28.5f), new Vector3(15.5f, LevelData.DefaultLayerY, -28.5f), new Vector3(15.5f, LevelData.DefaultLayerY, -25.5f), new Vector3(26.5f, LevelData.DefaultLayerY, -25.5f) };
 
     private Vector3[] scatterTargetList;
     private Vector3 scatterTarget;
@@ -62,7 +62,7 @@ public class GhostScatter : GhostBehavior
 
     void ChooseNextMoveScatter()
     {
-        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 

@@ -14,10 +14,10 @@ public class GhostBase : MonoBehaviour
     public GhostBehavior initialBehavior;
     [SerializeField] Transform Pacman;
 
-    private Vector3 BlinkyInitialPosition = new Vector3(12.5f,-11.5f); // Blinky
-    private Vector3 PinkyInitialPosition = new Vector3(13.5f, -13.5f); // Pinky
-    private Vector3 InkyInitialPosition = new Vector3(14.5f, -13.5f); // Inky
-    private Vector3 ClydeInitialPosition = new Vector3(15.5f, -13.5f);  // Clyde
+    private Vector3 BlinkyInitialPosition = new Vector3(12.5f, LevelData.DefaultLayerY, -11.5f); // Blinky
+    private Vector3 PinkyInitialPosition = new Vector3(13.5f, LevelData.DefaultLayerY, -13.5f); // Pinky
+    private Vector3 InkyInitialPosition = new Vector3(14.5f, LevelData.DefaultLayerY, -13.5f); // Inky
+    private Vector3 ClydeInitialPosition = new Vector3(15.5f, LevelData.DefaultLayerY, -13.5f);  // Clyde
 
 
     void Awake()

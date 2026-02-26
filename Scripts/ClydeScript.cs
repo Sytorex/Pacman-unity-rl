@@ -14,9 +14,9 @@ public class ClydeController : MonoBehaviour
     {
         // Alignement initial
         targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + 0.5f,
-            Mathf.Floor(transform.position.y) + 0.5f,
-            0
+            Mathf.Floor(transform.position.x) + LevelData.CellCenterOffset,
+            LevelData.DefaultLayerY,
+            Mathf.Floor(transform.position.z) + LevelData.CellCenterOffset
         );
         transform.position = targetPosition;
     }
@@ -39,7 +39,7 @@ public class ClydeController : MonoBehaviour
 
     void ChooseNextMove()
     {
-        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
         List<Vector3> availableDirections = new List<Vector3>();
 
         foreach (Vector3 dir in directions)
@@ -69,19 +69,8 @@ public class ClydeController : MonoBehaviour
 
     bool CanGhostMoveTo(Vector3 worldPos)
     {
-        // Conversion de la position monde en coordonnées tableau (Inversion du Y comme dans ton Generator)
-        int x = Mathf.FloorToInt(worldPos.x);
-        int y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
-
-        if (y >= 0 && y < LevelData.Map.GetLength(0) && x >= 0 && x < LevelData.Map.GetLength(1))
-        {
-            int cellValue = LevelData.Map[y, x];
-
-            // Clyde peut passer si ce n'est PAS un mur (0)
-            // Il PEUT passer si c'est du vide (1), une pastille (2/3) ou la PORTE (4)
-            return cellValue != (int)TileType.Wall;
-        }
-        return false;
+        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int z)) return false;
+        return LevelData.IsWalkable(x, z, allowGhostHouseDoor: true);
     }
 
     public void ResetPosition()

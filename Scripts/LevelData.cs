@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class LevelData
 {
+    public const float CellCenterOffset = 0.5f;
+    public const float DefaultLayerY = 0f;
+
     public static int[,] Map = new int[31, 28] 
     {
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
@@ -46,6 +49,49 @@ public class LevelData
         new Vector2Int(14, 11), // Inky
         new Vector2Int(15, 14)  // Clyde
     };
+
+    public static int Width => Map.GetLength(1);
+    public static int Height => Map.GetLength(0);
+
+    public static Vector3 GridToWorld(int x, int z, float layerY = DefaultLayerY)
+    {
+        return new Vector3(x + CellCenterOffset, layerY, -z + CellCenterOffset);
+    }
+
+    public static Vector3Int GridToTilePosition(int x, int z, int layer = 0)
+    {
+        return new Vector3Int(x, -z, layer);
+    }
+
+    public static bool TryWorldToGrid(Vector3 worldPos, out int x, out int z)
+    {
+        x = Mathf.FloorToInt(worldPos.x);
+        z = Mathf.Abs(Mathf.FloorToInt(worldPos.z));
+
+        return IsInsideBounds(x, z);
+    }
+
+    public static bool IsInsideBounds(int x, int z)
+    {
+        return z >= 0 && z < Height && x >= 0 && x < Width;
+    }
+
+    public static TileType GetTileType(int x, int z)
+    {
+        return (TileType)Map[z, x];
+    }
+
+    public static bool IsWalkable(int x, int z, bool allowGhostHouseDoor = false)
+    {
+        if (!IsInsideBounds(x, z)) return false;
+
+        TileType tileType = GetTileType(x, z);
+
+        if (tileType == TileType.Wall) return false;
+        if (!allowGhostHouseDoor && tileType == TileType.GhostHouseDoor) return false;
+
+        return true;
+    }
 }
 
 public enum TileType

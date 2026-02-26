@@ -241,6 +241,8 @@ MonoBehaviour:
   tilemap: {fileID: 1908745982}
   wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
   doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
+  orientTilemapToXZ: 1
+  tilemapLayerY: 0
   pelletPrefab: {fileID: 7409023658524369809, guid: 7d15df238dba71840b97ad544681bb8f,
     type: 3}
   powerPelletPrefab: {fileID: 5593661107182969094, guid: 0315ed9d39fab024f9a514943ec6939d,
@@ -252,6 +254,7 @@ MonoBehaviour:
   - {fileID: 547784954224032232, guid: f2083990e61fba74d968e620ff71a35e, type: 3}
   - {fileID: 5923877522608401650, guid: c43defb8433674542b40f4b5d058054e, type: 3}
   - {fileID: 8930928277205861113, guid: eb959f264708e7144a978658cabb3a00, type: 3}
+  allPellets: []
 --- !u!4 &746661469
 Transform:
   m_ObjectHideFlags: 0
@@ -636,13 +639,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1443877849}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13, y: -14, z: -40}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 15, y: 40, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &1746154767
 GameObject:
   m_ObjectHideFlags: 0

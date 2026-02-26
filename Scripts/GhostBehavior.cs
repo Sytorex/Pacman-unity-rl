@@ -47,19 +47,9 @@ public class GhostBehavior : MonoBehaviour
 
     public bool CanGhostMoveTo(Vector3 worldPos)
     {
-        // Conversion de la position monde en coordonnées tableau (Inversion du Y comme dans ton Generator)
-        int x = Mathf.FloorToInt(worldPos.x);
-        int y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
+        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int z)) return false;
 
-        if (y >= 0 && y < LevelData.Map.GetLength(0) && x >= 0 && x < LevelData.Map.GetLength(1))
-        {
-            int cellValue = LevelData.Map[y, x];
-
-            // Clyde peut passer si ce n'est PAS un mur (0) ou la PORTE (4)
-            // Il PEUT passer si c'est du vide (1), une pastille (2/3) 
-            return cellValue != -1 && cellValue!=3; // 0 représente un mur, 4 représente la porte, les autres sont des espaces traversables
-        }
-        return false;
+        return LevelData.IsWalkable(x, z, allowGhostHouseDoor: false);
     }
     public void AddDuration(float extra)
     {
@@ -68,7 +58,7 @@ public class GhostBehavior : MonoBehaviour
         Enable(remaining + extra);
     }
     protected List<Vector3> AvailableDirection(Vector3 worldPos){
-        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
         List<Vector3> availableDirections = new List<Vector3>();
 
         foreach (Vector3 dir in directions)

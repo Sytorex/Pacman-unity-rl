@@ -2,12 +2,13 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 
-public class LevelGenerator : MonoBehaviour
+ public class LevelGenerator : MonoBehaviour
 {
     [Header("Configuration")]
     public Tilemap tilemap;
     public TileBase wallTile;
     public TileBase doorTile;
+    public float tilemapLayerY = 0f;
     
     [Header("Prefabs")]
     public GameObject pelletPrefab;
@@ -28,17 +29,17 @@ public class LevelGenerator : MonoBehaviour
     {
         int[,] map = LevelData.Map;
         GameObject pellet;
-        for (int y = 0; y < map.GetLength(0); y++) 
+        for (int z = 0; z < map.GetLength(0); z++) 
         {
             for (int x = 0; x < map.GetLength(1); x++)
             {
                 // Récupère la valeur de la cellule et convertit en TileType
-                int cellValue = map[y, x];
+                int cellValue = map[z, x];
                 TileType type = (TileType)cellValue;
 
                 // Calcule la position de la tuile dans le Tilemap et la position du monde pour les objets
-                Vector3Int tilePosition = new Vector3Int(x, -y, 0);
-                Vector3 localPos = new Vector3(x + 0.5f, -y + 0.5f, 0);
+                Vector3Int tilePosition = LevelData.GridToTilePosition(x, z);
+                Vector3 localPos = LevelData.GridToWorld(x, z);
 
                 switch (type)
                 {
@@ -72,7 +73,7 @@ public class LevelGenerator : MonoBehaviour
     void GeneratePacman()
     {
         Vector2Int startPosition = LevelData.PacmanStartPosition;
-        Vector3 localPos = new Vector3(startPosition.x + 0.5f, -startPosition.y + 0.5f, 0);
+        Vector3 localPos = LevelData.GridToWorld(startPosition.x, startPosition.y);
         Instantiate(pacmanPrefab, localPos, Quaternion.identity, transform);
     }
 
@@ -84,7 +85,7 @@ public class LevelGenerator : MonoBehaviour
         {
             if (i >= ghostPrefabs.Length) break;
             Vector2Int pos = ghostPositions[i];
-            Vector3 localPos = new Vector3(pos.x + 0.5f, -pos.y + 0.5f, 0);
+            Vector3 localPos = LevelData.GridToWorld(pos.x, pos.y);
             GameObject ghost = Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
             spawnedGhosts.Add(ghost);
         }
@@ -92,7 +93,7 @@ public class LevelGenerator : MonoBehaviour
 
     void CenterCamera(int width, int height)
     {
-        Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -10);
+        Camera.main.transform.position = new Vector3(width / 2.0f, 20f, -height / 2.0f);
     }
 
     public void ResetLevel()
@@ -109,7 +110,8 @@ public class LevelGenerator : MonoBehaviour
             {
                 // Replacer à la position de départ
                 Vector2Int startPos = ghostPositions[i];
-                spawnedGhosts[i].transform.position = new Vector3(startPos.x + 0.5f, -startPos.y + 0.5f, 0);
+                Vector3 localPos = LevelData.GridToWorld(startPos.x, startPos.y);
+                spawnedGhosts[i].transform.position = localPos;
 
                 // Optionnel : Réinitialiser les scripts de comportement
                 // Si tes fantômes ont un script de base "GhostBase", appelle une fonction Reset dessus

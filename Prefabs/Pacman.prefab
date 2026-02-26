@@ -228,11 +228,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_SensorName: GridSensor
   m_CellScale: {x: 1, y: 0.01, z: 1}
-  m_GridSize: {x: 31, y: 1, z: 28}
-  m_RotateWithAgent: 1
+  m_GridSize: {x: 48, y: 1, z: 48}
+  m_RotateWithAgent: 0
   m_AgentGameObject: {fileID: 6245244823293568694}
   m_DetectableTags:
-  - pacman_ghost
   - pacman_pellet
   - pacman_power_pellet
   - pacman_wall
@@ -242,21 +241,20 @@ MonoBehaviour:
   - Pinky
   m_ColliderMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_MaxColliderBufferSize: 500
   m_InitialColliderBufferSize: 4
   m_DebugColors:
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  - {r: 0, g: 0, b: 0, a: 0}
-  m_GizmoYOffset: 0
-  m_ShowGizmos: 0
-  m_CompressionType: 1
+  - {r: 0.8773585, g: 0.12829298, b: 0.12829298, a: 0}
+  - {r: 0.44212526, g: 0.8396226, b: 0.10693307, a: 0}
+  - {r: 0.084549636, g: 0.1408645, b: 0.9433962, a: 0}
+  - {r: 0.754717, g: 0.16019939, b: 0.7106618, a: 0}
+  - {r: 0.8679245, g: 0.80971694, b: 0.12691349, a: 0}
+  - {r: 0.9433962, g: 0.90334636, b: 0.90334636, a: 0}
+  - {r: 0.077162705, g: 0.9622642, b: 0.83192754, a: 0}
+  m_GizmoYOffset: 0.1
+  m_ShowGizmos: 1
+  m_CompressionType: 0
   m_ObservationStacks: 1
 --- !u!114 &-313845967885682829
 MonoBehaviour:

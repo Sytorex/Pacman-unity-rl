@@ -36,9 +36,7 @@ public class GhostScatter : GhostBehavior
             {
                 isMoving = false;
                 //change target in assigned corner
-                Debug.Log("arrived at " + scatterTarget);
                 scatterTarget = scatterTargetList[Random.Range(0, scatterTargetList.Length)];
-                Debug.Log("New target" + scatterTarget);
             }
         }
     }

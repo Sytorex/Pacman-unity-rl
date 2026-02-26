@@ -165,18 +165,20 @@ public class GhostChase : GhostBehavior
         if (pacmanTransform != null && blinkyTransform != null)
         {
             
-            Vector3 pacmanForward = pacmanTransform.right;
-            Vector3 intermediatePoint = pacmanTransform.position + (pacmanForward * 2);
+            Vector3 pacmanDir = pacmanTransform.right;
 
-            Vector3 vectorFromBlinky = intermediatePoint - blinkyTransform.position;
+            Vector3 pivotPoint = pacmanTransform.position + (pacmanDir * 2);
 
-            targetGoal = blinkyTransform.position + (vectorFromBlinky * 2);
-            //Debug.Log("Inky a trouvé Pacman et Blinky. Cible : " + targetGoal);
+            Vector3 blinkyToPivot = pivotPoint - blinkyTransform.position;
+
+            targetGoal = blinkyTransform.position + (blinkyToPivot * 2);
+
+            Debug.DrawLine(blinkyTransform.position, targetGoal, Color.cyan);
+            Debug.DrawLine(pacmanTransform.position, pivotPoint, Color.yellow);
         }
         else
         {
-            //Debug.LogWarning("Inky est perdu ! Pacman : " + pacmanTransform + " | Blinky : " + blinkyTransform);
-            targetGoal = (pacmanTransform != null) ? pacmanTransform.position : transform.position;
+            targetGoal = transform.position;
         }
 
         foreach (Vector3 dir in directions)
@@ -184,6 +186,62 @@ public class GhostChase : GhostBehavior
             if (dir == -lastDirection) continue;
 
             Vector3 potentialStep = transform.position + dir;
+
+            if (CanGhostMoveTo(potentialStep))
+            {
+                if (Vector3.Distance(potentialStep, Vector3.zero) < 0.5f) continue;
+
+                float dist = Vector3.Distance(potentialStep, targetGoal);
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    bestDirection = dir;
+                }
+            }
+        }
+
+        if (bestDirection == Vector3.zero) bestDirection = -lastDirection;
+
+        lastDirection = bestDirection;
+        targetPosition = transform.position + bestDirection;
+        isMoving = true;
+    }
+
+    void ChooseNextMoveClyde()
+    {
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        Vector3 bestDirection = Vector3.zero;
+        float minDistance = float.MaxValue;
+        Vector3 targetGoal;
+
+        if (pacmanTransform != null)
+        {
+            // 1. Calculer la distance actuelle entre Clyde et Pac-Man
+            float distanceToPacman = Vector3.Distance(transform.position, pacmanTransform.position);
+
+            // 2. Déterminer la cible selon la distance (8 cases est le standard)
+            if (distanceToPacman > 8f)
+            {
+                // Clyde est loin : il cible directement Pac-Man
+                targetGoal = pacmanTransform.position;
+            }
+            else
+            {
+                
+                targetGoal = new Vector3(1.5f, -25.5f, 0);
+            }
+        }
+        else
+        {
+            targetGoal = transform.position;
+        }
+
+        foreach (Vector3 dir in directions)
+        {
+            if (dir == -lastDirection) continue;
+
+            Vector3 potentialStep = transform.position + dir;
+
             if (CanGhostMoveTo(potentialStep))
             {
                 float dist = Vector3.Distance(potentialStep, targetGoal);
@@ -195,11 +253,7 @@ public class GhostChase : GhostBehavior
             }
         }
 
-        if (bestDirection == Vector3.zero)
-        {
-            bestDirection = -lastDirection;
-            //Debug.LogError("Inky ne trouve aucune direction valide !");
-        }
+        if (bestDirection == Vector3.zero) bestDirection = -lastDirection;
 
         if (bestDirection != Vector3.zero)
         {
@@ -208,34 +262,5 @@ public class GhostChase : GhostBehavior
             isMoving = true;
         }
     }
-
-    void ChooseNextMoveClyde()
-    {
-        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
-        List<Vector3> availableDirections = new List<Vector3>();
-
-        foreach (Vector3 dir in directions)
-        {
-            // 1. Éviter le demi-tour immédiat
-            if (dir == -lastDirection && directions.Length > 1) continue;
-
-            // 2. Vérifier la grille de données au lieu de la physique
-            if (CanGhostMoveTo(transform.position + dir))
-            {
-                availableDirections.Add(dir);
-            }
-        }
-
-        // Cas d'impasse
-        if (availableDirections.Count == 0 && lastDirection != Vector3.zero)
-            availableDirections.Add(-lastDirection);
-
-        if (availableDirections.Count > 0)
-        {
-            Vector3 chosenDir = availableDirections[Random.Range(0, availableDirections.Count)];
-            lastDirection = chosenDir;
-            targetPosition = transform.position + chosenDir;
-            isMoving = true;
-        }
-    }
 }
+

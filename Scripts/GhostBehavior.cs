@@ -55,9 +55,9 @@ public class GhostBehavior : MonoBehaviour
         {
             int cellValue = LevelData.Map[y, x];
 
-            // Clyde peut passer si ce n'est PAS un mur (0)
-            // Il PEUT passer si c'est du vide (1), une pastille (2/3) ou la PORTE (4)
-            return cellValue != (int)TileType.Wall;
+            // Clyde peut passer si ce n'est PAS un mur (0) ou la PORTE (4)
+            // Il PEUT passer si c'est du vide (1), une pastille (2/3) 
+            return cellValue != -1 && cellValue!=3; // 0 représente un mur, 4 représente la porte, les autres sont des espaces traversables
         }
         return false;
     }

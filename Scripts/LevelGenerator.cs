@@ -16,6 +16,7 @@ public class LevelGenerator : MonoBehaviour
     public GameObject[] ghostPrefabs; // Blinky, Pinky, Inky, Clyde
 
     public List<GameObject> allPellets = new List<GameObject>();
+    public List<GameObject> spawnedGhosts = new List<GameObject>();
     void Start()
     {
         GenerateLevel();
@@ -84,7 +85,8 @@ public class LevelGenerator : MonoBehaviour
             if (i >= ghostPrefabs.Length) break;
             Vector2Int pos = ghostPositions[i];
             Vector3 localPos = new Vector3(pos.x + 0.5f, -pos.y + 0.5f, 0);
-            Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
+            GameObject ghost = Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
+            spawnedGhosts.Add(ghost);
         }
     }
 
@@ -100,10 +102,24 @@ public class LevelGenerator : MonoBehaviour
             if (pellet != null) pellet.SetActive(true);
         }
 
-        //GameObject[] ghosts = GameObject.FindGameObjectsWithTag("pacman_ghost");
-        //foreach (GameObject ghost in ghosts)
-        //{
-        //    ghost.GetComponent<ClydeController>().ResetPosition();
-        //}
+        Vector2Int[] ghostPositions = LevelData.GhostStartPositions;
+        for (int i = 0; i < spawnedGhosts.Count; i++)
+        {
+            if (spawnedGhosts[i] != null)
+            {
+                // Replacer à la position de départ
+                Vector2Int startPos = ghostPositions[i];
+                spawnedGhosts[i].transform.position = new Vector3(startPos.x + 0.5f, -startPos.y + 0.5f, 0);
+
+                // Optionnel : Réinitialiser les scripts de comportement
+                // Si tes fantômes ont un script de base "GhostBase", appelle une fonction Reset dessus
+                GhostBase ghostBase = spawnedGhosts[i].GetComponent<GhostBase>();
+                if (ghostBase != null)
+                {
+                    ghostBase.ResetState(); 
+                }
+            }
+        }
+
     }
 }

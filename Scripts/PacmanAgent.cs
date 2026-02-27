@@ -13,11 +13,15 @@ public class PacmanAgent : Agent
     private bool isMoving = false;
     private int nextAction = 0;
     private bool isPowerUpActive = false;
+    public LevelGenerator levelGenerator;
 
     public override void OnEpisodeBegin()
     {
         FindObjectOfType<LevelGenerator>().ResetLevel();
-
+        if (levelGenerator == null)
+        {
+            levelGenerator = FindObjectOfType<LevelGenerator>();
+        }
         nextAction = 0;
         currentMoveDir = Vector3.zero;
 
@@ -156,5 +160,33 @@ public class PacmanAgent : Agent
     private void DeactivatePowerUp()
     {
         isPowerUpActive = false;
+    }
+
+    public override void CollectObservations(VectorSensor sensor)
+    {
+       
+        sensor.AddObservation(transform.position.x / LevelData.Map.GetLength(1));
+        sensor.AddObservation(Mathf.Abs(transform.position.y) / LevelData.Map.GetLength(0));
+
+        
+        for (int y = 0; y < LevelData.Map.GetLength(0); y++)
+        {
+            for (int x = 0; x < LevelData.Map.GetLength(1); x++)
+            {
+                sensor.AddObservation(LevelData.Map[y, x] / 4f); // Normalisé (0 à 1)
+            }
+        }
+
+        
+        foreach (GameObject pellet in levelGenerator.allPellets)
+        {
+            sensor.AddObservation(pellet.activeSelf ? 1f : 0f);
+        }
+
+        foreach (GameObject ghost in levelGenerator.spawnedGhosts)
+        {
+            sensor.AddObservation(ghost.transform.position.x / LevelData.Map.GetLength(1));
+            sensor.AddObservation(Mathf.Abs(ghost.transform.position.y) / LevelData.Map.GetLength(0));
+        }
     }
 }

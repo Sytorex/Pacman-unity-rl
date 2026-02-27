@@ -19,9 +19,9 @@ public class BlinkyController : MonoBehaviour
 
         //Alignement initial sur la grille
         targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + LevelData.CellCenterOffset,
-            LevelData.DefaultLayerY,
-            Mathf.Floor(transform.position.z) + LevelData.CellCenterOffset
+            Mathf.Floor(transform.position.x) + 0.5f,
+            Mathf.Floor(transform.position.y) + 0.5f,
+            0
         );
         transform.position = targetPosition;
     }
@@ -45,7 +45,7 @@ public class BlinkyController : MonoBehaviour
 
     void ChooseNextMove()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 
@@ -87,8 +87,16 @@ public class BlinkyController : MonoBehaviour
 
     bool CanMoveTo(Vector3 worldPos)
     {
-        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int z)) return false;
-        return LevelData.IsWalkable(x, z, allowGhostHouseDoor: true);
+        int x = Mathf.FloorToInt(worldPos.x);
+        int y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
+
+        if (y >= 0 && y < LevelData.Map.GetLength(0) && x >= 0 && x < LevelData.Map.GetLength(1))
+        {
+            int cellValue = LevelData.Map[y, x];
+            //Blinky can not pass if it's a wall 
+            return cellValue != (int)TileType.Wall;
+        }
+        return false;
     }
 
     public void ResetPosition()

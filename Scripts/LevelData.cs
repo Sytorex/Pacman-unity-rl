@@ -3,7 +3,7 @@ using UnityEngine;
 public class LevelData
 {
     public const float CellCenterOffset = 0.5f;
-    public const float DefaultLayerY = 0f;
+    public const float DefaultLayerZ = 0f;
 
     public static int[,] Map = new int[31, 28] 
     {
@@ -50,42 +50,24 @@ public class LevelData
         new Vector2Int(15, 14)  // Clyde
     };
 
-    public static int Width => Map.GetLength(1);
-    public static int Height => Map.GetLength(0);
-
-    public static Vector3 GridToWorld(int x, int z, float layerY = DefaultLayerY)
+    public static Vector3 GridToWorld(int x, int y, float layerZ = DefaultLayerZ)
     {
-        return new Vector3(x + CellCenterOffset, layerY, -z + CellCenterOffset);
+        return new Vector3(x + CellCenterOffset, -y + CellCenterOffset, layerZ);
     }
 
-    public static Vector3Int GridToTilePosition(int x, int z, int layer = 0)
-    {
-        return new Vector3Int(x, -z, layer);
-    }
-
-    public static bool TryWorldToGrid(Vector3 worldPos, out int x, out int z)
+    public static bool TryWorldToGrid(Vector3 worldPos, out int x, out int y)
     {
         x = Mathf.FloorToInt(worldPos.x);
-        z = Mathf.Abs(Mathf.FloorToInt(worldPos.z));
+        y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
 
-        return IsInsideBounds(x, z);
+        return y >= 0 && y < Map.GetLength(0) && x >= 0 && x < Map.GetLength(1);
     }
 
-    public static bool IsInsideBounds(int x, int z)
+    public static bool IsWalkable(int x, int y, bool allowGhostHouseDoor = false)
     {
-        return z >= 0 && z < Height && x >= 0 && x < Width;
-    }
+        if (y < 0 || y >= Map.GetLength(0) || x < 0 || x >= Map.GetLength(1)) return false;
 
-    public static TileType GetTileType(int x, int z)
-    {
-        return (TileType)Map[z, x];
-    }
-
-    public static bool IsWalkable(int x, int z, bool allowGhostHouseDoor = false)
-    {
-        if (!IsInsideBounds(x, z)) return false;
-
-        TileType tileType = GetTileType(x, z);
+        TileType tileType = (TileType)Map[y, x];
 
         if (tileType == TileType.Wall) return false;
         if (!allowGhostHouseDoor && tileType == TileType.GhostHouseDoor) return false;

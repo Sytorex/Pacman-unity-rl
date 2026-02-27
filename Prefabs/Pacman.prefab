@@ -211,6 +211,9 @@ MonoBehaviour:
   moveSpeed: 5
   score: 0
   scoreText: {fileID: 0}
+  wallLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!114 &2786251557491613470
 MonoBehaviour:
   m_ObjectHideFlags: 0

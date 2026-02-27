@@ -23,9 +23,9 @@ public class PinkyController : MonoBehaviour
 
         // Alignement initial sur la grille
         targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + LevelData.CellCenterOffset,
-            LevelData.DefaultLayerY,
-            Mathf.Floor(transform.position.z) + LevelData.CellCenterOffset
+            Mathf.Floor(transform.position.x) + 0.5f,
+            Mathf.Floor(transform.position.y) + 0.5f,
+            0
         );
         transform.position = targetPosition;
     }
@@ -49,7 +49,7 @@ public class PinkyController : MonoBehaviour
 
     void ChooseNextMove()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 
@@ -62,7 +62,7 @@ public class PinkyController : MonoBehaviour
             Vector3 pacmanPos = pacmanTransform.position;
 
             //on récupère la direction de pacman
-            Vector3 pacmanForward = pacmanTransform.forward;
+            Vector3 pacmanForward = pacmanTransform.right;
 
             // La cible de Pinky est 4 cases devant Pac-Man
             currentTargetGoal = pacmanPos + (pacmanForward * predictionSteps);
@@ -102,14 +102,22 @@ public class PinkyController : MonoBehaviour
     bool IsInGhostHouse()
     {
         float x = transform.position.x;
-        float z = transform.position.z;
-        return (x > 10 && x < 18 && z < -11 && z > -18);
+        float y = transform.position.y;
+        return (x > 10 && x < 18 && y < -11 && y > -18);
     }
 
     bool CanMoveTo(Vector3 worldPos)
     {
-        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int z)) return false;
-        return LevelData.IsWalkable(x, z, allowGhostHouseDoor: true);
+        int x = Mathf.FloorToInt(worldPos.x);
+        int y = Mathf.Abs(Mathf.FloorToInt(worldPos.y));
+
+        if (y >= 0 && y < LevelData.Map.GetLength(0) && x >= 0 && x < LevelData.Map.GetLength(1))
+        {
+            int cellValue = LevelData.Map[y, x];
+            //Blinky can not pass if it's a wall 
+            return cellValue != (int)TileType.Wall;
+        }
+        return false;
     }
 
     public void ResetPosition()

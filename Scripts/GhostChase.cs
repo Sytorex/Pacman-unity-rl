@@ -29,9 +29,9 @@ public class GhostChase : GhostBehavior
 
         //Alignement initial sur la grille
         targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + LevelData.CellCenterOffset,
-            LevelData.DefaultLayerY,
-            Mathf.Floor(transform.position.z) + LevelData.CellCenterOffset
+            Mathf.Floor(transform.position.x) + 0.5f,
+            Mathf.Floor(transform.position.y) + 0.5f,
+            0
         );
         transform.position = targetPosition;
 
@@ -63,7 +63,7 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMoveBlinky()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 
@@ -105,7 +105,7 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMovePinky()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 
@@ -118,7 +118,7 @@ public class GhostChase : GhostBehavior
             Vector3 pacmanPos = pacmanTransform.position;
 
             //on récupère la direction de pacman
-            Vector3 pacmanForward = pacmanTransform.forward;
+            Vector3 pacmanForward = pacmanTransform.right;
 
             // La cible de Pinky est 4 cases devant Pac-Man
             currentTargetGoal = pacmanPos + (pacmanForward * 4);
@@ -157,7 +157,7 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMoveInky()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
         Vector3 targetGoal;
@@ -165,7 +165,7 @@ public class GhostChase : GhostBehavior
         if (pacmanTransform != null && blinkyTransform != null)
         {
             
-            Vector3 pacmanDir = pacmanTransform.forward;
+            Vector3 pacmanDir = pacmanTransform.right;
 
             Vector3 pivotPoint = pacmanTransform.position + (pacmanDir * 2);
 
@@ -209,7 +209,7 @@ public class GhostChase : GhostBehavior
 
     void ChooseNextMoveClyde()
     {
-        Vector3[] directions = { Vector3.forward, Vector3.back, Vector3.left, Vector3.right };
+        Vector3[] directions = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
         Vector3 targetGoal;
@@ -228,7 +228,7 @@ public class GhostChase : GhostBehavior
             else
             {
                 
-                targetGoal = new Vector3(1.5f, LevelData.DefaultLayerY, -25.5f);
+                targetGoal = new Vector3(1.5f, -25.5f, 0);
             }
         }
         else

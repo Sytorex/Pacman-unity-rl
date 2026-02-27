@@ -56,16 +56,16 @@ public class PacmanAgent : Agent
         int action = actions.DiscreteActions[0];
         Vector3 wantedDir = Vector3.zero;
         float rotation = 0f;
-        if (action == 1) { wantedDir = Vector3.forward; rotation = 0f; }
-        else if (action == 2) { wantedDir = Vector3.back; rotation = 180f; }
-        else if (action == 3) { wantedDir = Vector3.left; rotation = 270f; }
-        else if (action == 4) { wantedDir = Vector3.right; rotation = 90f; }
+        if (action == 1) { wantedDir = Vector3.up; rotation = 90f; }
+        else if (action == 2) { wantedDir = Vector3.down; rotation = -90f; }
+        else if (action == 3) { wantedDir = Vector3.left; rotation = 180f; }
+        else if (action == 4) { wantedDir = Vector3.right; rotation = 0f; }
 
         
         if (wantedDir != Vector3.zero && CanMoveTo(transform.position + wantedDir))
         {
             currentMoveDir = wantedDir;
-            transform.eulerAngles = new Vector3(0, rotation, 0);
+            transform.eulerAngles = new Vector3(0, 0, rotation);
         }
 
         if (currentMoveDir != Vector3.zero)
@@ -85,9 +85,9 @@ public class PacmanAgent : Agent
 
     private bool CanMoveTo(Vector3 worldPos)
     {
-        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int z)) return false;
+        if (!LevelData.TryWorldToGrid(worldPos, out int x, out int y)) return false;
 
-        return LevelData.IsWalkable(x, z, allowGhostHouseDoor: false);
+        return LevelData.IsWalkable(x, y, allowGhostHouseDoor: false);
     }
 
     System.Collections.IEnumerator SmoothMove()
@@ -99,60 +99,41 @@ public class PacmanAgent : Agent
             yield return null;
         }
         transform.position = targetPosition;
-        HandlePickupsAndGhostCollisions();
         isMoving = false;
     }
 
-    private void HandlePickupsAndGhostCollisions()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        LevelGenerator levelGenerator = FindObjectOfType<LevelGenerator>();
-        if (levelGenerator != null)
+        if (other.CompareTag("pacman_pellet") == true)
         {
-            foreach (GameObject pellet in levelGenerator.allPellets)
+            AddReward(10f);
+            AddScore(10);
+            other.gameObject.SetActive(false);
+        } else if (other.CompareTag("pacman_power_pellet") == true)
+        {
+            AddReward(50f);
+            AddScore(50);
+            other.gameObject.SetActive(false);
+            isPowerUpActive = true;
+            Invoke("DeactivatePowerUp", 8f);
+
+            GhostBase[] ghosts = FindObjectsOfType<GhostBase>();
+
+            foreach (GhostBase ghost in ghosts)
             {
-                if (pellet == null || !pellet.activeSelf) continue;
-
-                if (Vector3.Distance(transform.position, pellet.transform.position) > 0.2f) continue;
-
-                if (pellet.CompareTag("pacman_pellet"))
+                if (!ghost.home.enabled)
                 {
-                    AddReward(10f);
-                    AddScore(10);
-                    pellet.SetActive(false);
-                }
-                else if (pellet.CompareTag("pacman_power_pellet"))
-                {
-                    AddReward(50f);
-                    AddScore(50);
-                    pellet.SetActive(false);
-                    isPowerUpActive = true;
-                    Invoke("DeactivatePowerUp", 8f);
-
-                    GhostBase[] allGhosts = FindObjectsOfType<GhostBase>();
-
-                    foreach (GhostBase ghost in allGhosts)
-                    {
-                        if (!ghost.home.enabled)
-                        {
-                            ghost.frightened.Enable(8f);
-                        }
-                    }
+                    ghost.frightened.Enable(8f);
                 }
             }
         }
-
-        GhostBehavior[] ghostBehaviors = FindObjectsOfType<GhostBehavior>();
-        foreach (GhostBehavior ghostBehavior in ghostBehaviors)
+         else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)
         {
-            if (!ghostBehavior.enabled) continue;
-            if (Vector3.Distance(transform.position, ghostBehavior.transform.position) > 0.35f) continue;
-
-            GhostFrightened frightened = ghostBehavior.GetComponent<GhostFrightened>();
-            if (isPowerUpActive && frightened != null && frightened.enabled)
+            if (isPowerUpActive)
             {
                 AddReward(200f);
                 AddScore(200);
-                frightened.Eaten();
+                other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
             else
             {
@@ -161,8 +142,6 @@ public class PacmanAgent : Agent
                 AddScore(-100);
                 EndEpisode();
             }
-
-            break;
         }
     }
 

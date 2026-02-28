@@ -17,6 +17,12 @@ public class LevelGenerator : MonoBehaviour
 
     public List<GameObject> allPellets = new List<GameObject>();
     public List<GameObject> spawnedGhosts = new List<GameObject>();
+
+    public static Vector3 GridToWorld(float x, float y, float z = 0f)
+    {
+        return new Vector3(Mathf.Floor(x) + 0.5f, Mathf.Floor(y) + 0.5f, z);
+    }
+
     void Start()
     {
         GenerateLevel();
@@ -38,7 +44,7 @@ public class LevelGenerator : MonoBehaviour
 
                 // Calcule la position de la tuile dans le Tilemap et la position du monde pour les objets
                 Vector3Int tilePosition = new Vector3Int(x, -y, 0);
-                Vector3 localPos = new Vector3(x + 0.5f, -y + 0.5f, 0);
+                Vector3 localPos = GridToWorld(x, -y);
 
                 switch (type)
                 {
@@ -72,7 +78,7 @@ public class LevelGenerator : MonoBehaviour
     void GeneratePacman()
     {
         Vector2Int startPosition = LevelData.PacmanStartPosition;
-        Vector3 localPos = new Vector3(startPosition.x + 0.5f, -startPosition.y + 0.5f, 0);
+        Vector3 localPos = GridToWorld(startPosition.x, -startPosition.y);
         Instantiate(pacmanPrefab, localPos, Quaternion.identity, transform);
     }
 
@@ -84,7 +90,7 @@ public class LevelGenerator : MonoBehaviour
         {
             if (i >= ghostPrefabs.Length) break;
             Vector2Int pos = ghostPositions[i];
-            Vector3 localPos = new Vector3(pos.x + 0.5f, -pos.y + 0.5f, 0);
+            Vector3 localPos = GridToWorld(pos.x, -pos.y);
             GameObject ghost = Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
             spawnedGhosts.Add(ghost);
         }
@@ -109,7 +115,7 @@ public class LevelGenerator : MonoBehaviour
             {
                 // Replacer à la position de départ
                 Vector2Int startPos = ghostPositions[i];
-                spawnedGhosts[i].transform.position = new Vector3(startPos.x + 0.5f, -startPos.y + 0.5f, 0);
+                spawnedGhosts[i].transform.position = GridToWorld(startPos.x, -startPos.y);
 
                 // Optionnel : Réinitialiser les scripts de comportement
                 // Si tes fantômes ont un script de base "GhostBase", appelle une fonction Reset dessus

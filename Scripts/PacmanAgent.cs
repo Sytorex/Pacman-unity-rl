@@ -30,7 +30,7 @@ public class PacmanAgent : Agent
 
         Vector2Int startPos = LevelData.PacmanStartPosition;
 
-        transform.position = new Vector3(startPos.x + 0.5f, -startPos.y + 0.5f, 0);
+        transform.position = LevelGenerator.GridToWorld(startPos.x, -startPos.y);
 
         targetPosition = transform.position;
         isMoving = false;

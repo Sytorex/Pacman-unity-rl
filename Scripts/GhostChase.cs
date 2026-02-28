@@ -27,11 +27,9 @@ public class GhostChase : GhostBehavior
         GameObject blinky = GameObject.FindGameObjectWithTag("Blinky");
         if (blinky != null) blinkyTransform = blinky.transform;
 
-        //Alignement initial sur la grille
-        targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + 0.5f,
-            Mathf.Floor(transform.position.y) + 0.5f,
-            0
+        targetPosition = LevelGenerator.GridToWorld(
+            transform.position.x,
+            transform.position.y
         );
         transform.position = targetPosition;
 

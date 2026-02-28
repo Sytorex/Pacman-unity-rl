@@ -12,11 +12,9 @@ public class ClydeController : MonoBehaviour
 
     void Start()
     {
-        // Alignement initial
-        targetPosition = new Vector3(
-            Mathf.Floor(transform.position.x) + 0.5f,
-            Mathf.Floor(transform.position.y) + 0.5f,
-            0
+        targetPosition = LevelGenerator.GridToWorld(
+            transform.position.x,
+            transform.position.y
         );
         transform.position = targetPosition;
     }

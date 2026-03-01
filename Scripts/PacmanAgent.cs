@@ -7,45 +7,31 @@ using TMPro;
 public class PacmanAgent : Agent
 {
     public float moveSpeed = 5f;
-    public int score = 0;
-    [SerializeField] private TextMeshProUGUI scoreText;
+    public LevelGenerator levelGenerator;
+    public LayerMask wallLayer;
     private Vector3 targetPosition;
     private bool isMoving = false;
     private int nextAction = 0;
     private bool isPowerUpActive = false;
-    public LevelGenerator levelGenerator;
+    private Vector3 currentMoveDir = Vector3.zero;
+    private bool isReady = false;
 
-    // Assigne le layer "Walls" dans l'inspecteur
-    public LayerMask wallLayer;
 
     public override void OnEpisodeBegin()
     {
-        if (levelGenerator == null)
-        {
-            LevelGenerator[] generators = FindObjectsByType<LevelGenerator>(FindObjectsSortMode.None);
-            if (generators.Length > 0)
-            {
-                levelGenerator = generators[0];
-            }
-        }
+        // Reset le level
+        levelGenerator.ResetLevel();
 
-        if (levelGenerator != null)
-        {
-            levelGenerator.ResetLevel();
-        }
         nextAction = 0;
         currentMoveDir = Vector3.zero;
 
         Vector2Int startPos = LevelData.PacmanStartPosition;
-
         transform.position = LevelGenerator.GridToWorld(startPos.x, -startPos.y);
-
         targetPosition = transform.position;
+
         isMoving = false;
     }
 
-    // Optionnel : Désactive l'agent pendant 0.1s au réveil pour laisser la physique s'installer
-    private bool isReady = false;
     void Start()
     {
         Invoke("SetReady", 0.1f);
@@ -64,7 +50,7 @@ public class PacmanAgent : Agent
 
         discreteActions[0] = nextAction;
     }
-    private Vector3 currentMoveDir = Vector3.zero;
+    
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (isMoving || !isReady) return;
@@ -116,12 +102,10 @@ public class PacmanAgent : Agent
         if (other.CompareTag("pacman_pellet") == true)
         {
             AddReward(10f);
-            AddScore(10);
             other.gameObject.SetActive(false);
         } else if (other.CompareTag("pacman_power_pellet") == true)
         {
             AddReward(50f);
-            AddScore(50);
             other.gameObject.SetActive(false);
             isPowerUpActive = true;
             Invoke("DeactivatePowerUp", 8f);
@@ -141,24 +125,14 @@ public class PacmanAgent : Agent
             if (isPowerUpActive)
             {
                 AddReward(200f);
-                AddScore(200);
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
             else
             {
                 Debug.Log("Collision avec un fantôme !");
                 AddReward(-100f);
-                AddScore(-100);
                 EndEpisode();
             }
-        }
-    }
-
-    private void AddScore(int amount)
-    {
-        score += amount;
-        if (scoreText != null) {
-            scoreText.text = "Score: " + score.ToString();
         }
     }
 
@@ -167,6 +141,7 @@ public class PacmanAgent : Agent
         isPowerUpActive = false;
     }
 
+/*
     public override void CollectObservations(VectorSensor sensor)
     {
        
@@ -194,4 +169,5 @@ public class PacmanAgent : Agent
             sensor.AddObservation(Mathf.Abs(ghost.transform.position.y) / LevelData.Map.GetLength(0));
         }
     }
+    */
 }

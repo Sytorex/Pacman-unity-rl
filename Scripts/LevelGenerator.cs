@@ -8,15 +8,18 @@ public class LevelGenerator : MonoBehaviour
     public Tilemap tilemap;
     public TileBase wallTile;
     public TileBase doorTile;
-    
+
+    [Header("Elements")]
+    public GameObject pelletContainer;
+    public GameObject pacmanObject;
+    public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
+
     [Header("Prefabs")]
     public GameObject pelletPrefab;
     public GameObject powerPelletPrefab;
-    public GameObject pacmanPrefab;
-    public GameObject[] ghostPrefabs; // Blinky, Pinky, Inky, Clyde
 
-    public List<GameObject> allPellets = new List<GameObject>();
-    public List<GameObject> spawnedGhosts = new List<GameObject>();
+    private List<GameObject> allPellets = new List<GameObject>();
+    private List<GameObject> spawnedGhosts = new List<GameObject>();
 
     public static Vector3 GridToWorld(float x, float y, float z = 0f)
     {
@@ -26,6 +29,10 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         GenerateLevel();
+        CenterCamera(LevelData.Map.GetLength(1), LevelData.Map.GetLength(0));
+
+        spawnedGhosts = new List<GameObject>(ghostObjects);
+        ResetLevel();
     }
 
     void GenerateLevel()
@@ -51,12 +58,12 @@ public class LevelGenerator : MonoBehaviour
                         break;
 
                     case TileType.Pellet:
-                        pellet=Instantiate(pelletPrefab, localPos, Quaternion.identity, transform);
+                        pellet=Instantiate(pelletPrefab, localPos, Quaternion.identity, pelletContainer.transform);
                         allPellets.Add(pellet);
                         break;
 
                     case TileType.PowerPellet:
-                        pellet=Instantiate(powerPelletPrefab, localPos, Quaternion.identity, transform);
+                        pellet=Instantiate(powerPelletPrefab, localPos, Quaternion.identity, pelletContainer.transform);
                         allPellets.Add(pellet);
                         break;
                     
@@ -75,16 +82,18 @@ public class LevelGenerator : MonoBehaviour
 
     void CenterCamera(int width, int height)
     {
-        Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -10);
+        Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -40);
     }
 
     public void ResetLevel()
     {
+        // Réactive tous les pellets
         foreach (GameObject pellet in allPellets)
         {
             if (pellet != null) pellet.SetActive(true);
         }
 
+        // Réinitialise la position des fantômes
         for (int i = 0; i < spawnedGhosts.Count; i++)
         {
             if (spawnedGhosts[i] != null)
@@ -96,6 +105,5 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
-
     }
 }

@@ -29,7 +29,8 @@ public class GhostChase : GhostBehavior
 
         targetPosition = LevelGenerator.GridToWorld(
             transform.position.x,
-            transform.position.y
+            transform.position.y,
+             -0.1f
         );
         transform.position = targetPosition;
 

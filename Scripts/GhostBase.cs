@@ -37,7 +37,7 @@ public class GhostBase : MonoBehaviour
 
         if (isBlinky)
         {
-            transform.position = LevelGenerator.GridToWorld(LevelData.BlinkyStartPosition.x, -LevelData.BlinkyStartPosition.y);
+            transform.position = LevelGenerator.GridToWorld(LevelData.HomeDoorPosition.x, -LevelData.HomeDoorPosition.y, -0.1f);
         }
         else
         {
@@ -54,6 +54,6 @@ public class GhostBase : MonoBehaviour
 
     public void ResetPosition() { 
         Vector2Int pos = LevelData.GhostHomePositions[this.tag];
-        transform.position = LevelGenerator.GridToWorld(pos.x, -pos.y);
+        transform.position = LevelGenerator.GridToWorld(pos.x, -pos.y, -0.1f);
     }
 }

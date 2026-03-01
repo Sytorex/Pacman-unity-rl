@@ -48,7 +48,8 @@ public class LevelData
         { "Clyde", new(15, 14) }
     };
 
-    public static readonly Vector2Int BlinkyStartPosition = new(13, 11);
+    public static readonly Vector2Int HomeDoorPosition = new(13, 11);
+
 }
 
 public enum TileType

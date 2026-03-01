@@ -16,7 +16,7 @@ public class GhostHome : GhostBehavior
         speed = 4f; // Reset speed when leaving home
 
         //Move Ghost outside of Home
-        transform.position = new Vector3(14.5f, -10.5f, 0); // Position just outside the home
+        transform.position = LevelGenerator.GridToWorld(LevelData.HomeDoorPosition.x, -LevelData.HomeDoorPosition.y, -0.1f);
         this.ghost.scatter.Enable(); // Enable scatter mode when leaving home
     }
 }

@@ -14,12 +14,6 @@ public class GhostBase : MonoBehaviour
     public GhostBehavior initialBehavior;
     [SerializeField] Transform Pacman;
 
-    private Vector3 BlinkyInitialPosition = new Vector3(12.5f,-13.5f); // Blinky
-    private Vector3 PinkyInitialPosition = new Vector3(13.5f, -13.5f); // Pinky
-    private Vector3 InkyInitialPosition = new Vector3(14.5f, -13.5f); // Inky
-    private Vector3 ClydeInitialPosition = new Vector3(15.5f, -13.5f);  // Clyde
-
-
     void Awake()
     {
         this.home = GetComponent<GhostHome>();
@@ -33,8 +27,6 @@ public class GhostBase : MonoBehaviour
     {
         ResetState();
     }
-
-
 
     public void ResetState()
     {
@@ -56,21 +48,7 @@ public class GhostBase : MonoBehaviour
     }
 
     public void ResetPosition() { 
-        if (this.tag =="Blinky")
-        {
-            transform.position = BlinkyInitialPosition;
-        }
-        else if (this.tag == "Pinky")
-        {
-            transform.position = PinkyInitialPosition;
-        }
-        else if (this.tag == "Inky")
-        {
-            transform.position = InkyInitialPosition;
-        }
-        else if (this.tag =="Clyde")
-        {
-            transform.position = ClydeInitialPosition;
-        }
+        Vector2Int pos = LevelData.GhostStartPositions[this.tag];
+        transform.position = LevelGenerator.GridToWorld(pos.x, -pos.y);
     }
 }

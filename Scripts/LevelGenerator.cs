@@ -26,8 +26,6 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         GenerateLevel();
-        GeneratePacman();
-        GenerateGhosts();
     }
 
     void GenerateLevel()
@@ -75,27 +73,6 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    void GeneratePacman()
-    {
-        Vector2Int startPosition = LevelData.PacmanStartPosition;
-        Vector3 localPos = GridToWorld(startPosition.x, -startPosition.y);
-        Instantiate(pacmanPrefab, localPos, Quaternion.identity, transform);
-    }
-
-    void GenerateGhosts()
-    {
-        Vector2Int[] ghostPositions = LevelData.GhostStartPositions;
-
-        for (int i = 0; i < ghostPositions.Length; i++)
-        {
-            if (i >= ghostPrefabs.Length) break;
-            Vector2Int pos = ghostPositions[i];
-            Vector3 localPos = GridToWorld(pos.x, -pos.y);
-            GameObject ghost = Instantiate(ghostPrefabs[i], localPos, Quaternion.identity, transform);
-            spawnedGhosts.Add(ghost);
-        }
-    }
-
     void CenterCamera(int width, int height)
     {
         Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -10);
@@ -108,17 +85,10 @@ public class LevelGenerator : MonoBehaviour
             if (pellet != null) pellet.SetActive(true);
         }
 
-        Vector2Int[] ghostPositions = LevelData.GhostStartPositions;
         for (int i = 0; i < spawnedGhosts.Count; i++)
         {
             if (spawnedGhosts[i] != null)
             {
-                // Replacer à la position de départ
-                Vector2Int startPos = ghostPositions[i];
-                spawnedGhosts[i].transform.position = GridToWorld(startPos.x, -startPos.y);
-
-                // Optionnel : Réinitialiser les scripts de comportement
-                // Si tes fantômes ont un script de base "GhostBase", appelle une fonction Reset dessus
                 GhostBase ghostBase = spawnedGhosts[i].GetComponent<GhostBase>();
                 if (ghostBase != null)
                 {

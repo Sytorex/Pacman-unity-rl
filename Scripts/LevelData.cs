@@ -1,8 +1,9 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class LevelData
 {
-    public static int[,] Map = new int[31, 28] 
+    public static readonly int[,] Map = 
     {
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
         {-1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1},
@@ -37,14 +38,14 @@ public class LevelData
         {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
     };
 
-    public static Vector2Int PacmanStartPosition = new Vector2Int(13, 23);
+    public static readonly Vector2Int PacmanStartPosition = new(13, 23);
 
-    public static Vector2Int[] GhostStartPositions = new Vector2Int[]
+    public static readonly Dictionary<string, Vector2Int> GhostStartPositions = new()
     {
-        new Vector2Int(13, 14), // Blinky
-        new Vector2Int(13, 14), // Pinky
-        new Vector2Int(14, 14), // Inky
-        new Vector2Int(15, 14)  // Clyde
+        { "Blinky", new(12, 14) },
+        { "Pinky", new(13, 14) },
+        { "Inky", new(14, 14) },
+        { "Clyde", new(15, 14) }
     };
 }
 

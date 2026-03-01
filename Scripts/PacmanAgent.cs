@@ -20,10 +20,18 @@ public class PacmanAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        FindObjectOfType<LevelGenerator>().ResetLevel();
         if (levelGenerator == null)
         {
-            levelGenerator = FindObjectOfType<LevelGenerator>();
+            LevelGenerator[] generators = FindObjectsByType<LevelGenerator>(FindObjectsSortMode.None);
+            if (generators.Length > 0)
+            {
+                levelGenerator = generators[0];
+            }
+        }
+
+        if (levelGenerator != null)
+        {
+            levelGenerator.ResetLevel();
         }
         nextAction = 0;
         currentMoveDir = Vector3.zero;
@@ -118,7 +126,7 @@ public class PacmanAgent : Agent
             isPowerUpActive = true;
             Invoke("DeactivatePowerUp", 8f);
 
-            GhostBase[] ghosts = FindObjectsOfType<GhostBase>();
+            GhostBase[] ghosts = FindObjectsByType<GhostBase>(FindObjectsSortMode.None);
 
             foreach (GhostBase ghost in ghosts)
             {

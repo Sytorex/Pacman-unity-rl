@@ -3,13 +3,11 @@ using UnityEngine;
 
 public class GhostBase : MonoBehaviour
 {
-    
-    public int points = 200;
-
     public GhostHome home;
     public GhostScatter scatter;
     public GhostChase chase;
     public GhostFrightened frightened;
+    public bool isBlinky = false;
 
     public GhostBehavior initialBehavior;
     [SerializeField] Transform Pacman;
@@ -33,11 +31,18 @@ public class GhostBase : MonoBehaviour
         gameObject.SetActive(true);
 
         home.enabled = false;
-        chase.enabled = false;
         scatter.enabled = false;
+        chase.enabled = false;
         frightened.enabled = false;
 
-        ResetPosition();
+        if (isBlinky)
+        {
+            transform.position = LevelGenerator.GridToWorld(LevelData.BlinkyStartPosition.x, -LevelData.BlinkyStartPosition.y);
+        }
+        else
+        {
+            ResetPosition();
+        }
 
         if (initialBehavior != null)
         {
@@ -48,7 +53,7 @@ public class GhostBase : MonoBehaviour
     }
 
     public void ResetPosition() { 
-        Vector2Int pos = LevelData.GhostStartPositions[this.tag];
+        Vector2Int pos = LevelData.GhostHomePositions[this.tag];
         transform.position = LevelGenerator.GridToWorld(pos.x, -pos.y);
     }
 }

@@ -5,10 +5,10 @@ using UnityEngine;
 public class GhostBehavior : MonoBehaviour
 {
     public GhostBase ghost;
-    public float DefDuration = 5f;
-    private float disableTime;
+    public float DefDuration = 5f; // Default duration for behaviors that have a time limit (like Frightened or Home)
 
     public float speed = 4f;
+    private float disableTime;
 
     protected Vector3 targetPosition;
     protected Vector3 lastDirection;

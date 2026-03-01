@@ -29,6 +29,8 @@ public class PacmanAgent : Agent
         transform.position = LevelGenerator.GridToWorld(startPos.x, -startPos.y);
         targetPosition = transform.position;
 
+        transform.eulerAngles = Vector3.zero;
+
         isMoving = false;
     }
 

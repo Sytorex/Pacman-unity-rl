@@ -40,13 +40,15 @@ public class LevelData
 
     public static readonly Vector2Int PacmanStartPosition = new(13, 23);
 
-    public static readonly Dictionary<string, Vector2Int> GhostStartPositions = new()
+    public static readonly Dictionary<string, Vector2Int> GhostHomePositions = new()
     {
         { "Blinky", new(12, 14) },
         { "Pinky", new(13, 14) },
         { "Inky", new(14, 14) },
         { "Clyde", new(15, 14) }
     };
+
+    public static readonly Vector2Int BlinkyStartPosition = new(13, 11);
 }
 
 public enum TileType

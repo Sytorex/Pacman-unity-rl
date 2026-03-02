@@ -130,6 +130,10 @@ public class PacmanAgent : Agent
                 {
                     ghost.frightened.Enable(PowerUpDuration);
                 }
+                else
+                {
+                    ghost.home.AddDuration(PowerUpDuration);
+                }
             }
         }
          else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)

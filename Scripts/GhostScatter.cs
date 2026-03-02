@@ -10,6 +10,12 @@ public class GhostScatter : GhostBehavior
         this.ghost.home.Disable();
         Debug.Log("scatter mode on " + this.tag);
         ChooseCorner();
+        targetPosition = LevelGenerator.GridToWorld(
+             transform.localPosition.x,
+             transform.localPosition.y,
+             LevelGenerator.GhostZLayer
+        );
+        transform.localPosition = targetPosition;
         isMoving = false;
     }
 

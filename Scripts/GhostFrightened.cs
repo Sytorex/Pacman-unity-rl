@@ -14,6 +14,7 @@ public class GhostFrightened : GhostBehavior
 
     public override void Enable(float duration)
     {
+        
         base.Enable(duration);
         eaten = false;
         body.enabled = false;
@@ -23,7 +24,7 @@ public class GhostFrightened : GhostBehavior
         //if (this.ghost.chase.enabled) isChase = true;
         //this.ghost.chase.Disable();
         //this.ghost.scatter.Disable();
-        //if(this.ghost.frightened.enabled)this.ghost.home.Enable(duration + 1f); // Ensure if ghost is home it stays home for the entire frightened duration
+        //if(this.ghost.home.enabled)this.ghost.home.Enable(duration + 1f); // Ensure if ghost is home it stays home for the entire frightened duration
         Invoke(nameof(Flash), duration * 0.5f); // Flash halfway through the frightened duration
     }
 
@@ -60,15 +61,18 @@ public class GhostFrightened : GhostBehavior
         );
         transform.localPosition = targetPosition;
         isMoving = false;
+        Debug.Log($"{ghost.tag} frightened OnEnable - home.enabled={ghost.home.enabled}, scatter.enabled={ghost.scatter.enabled}, chase.enabled={ghost.chase.enabled}");
 
         if (ghost.home.enabled)
         {
             // no new Ghost gets out during frightened mode, but if a ghost is already in the home when frightened mode starts, it should stay there for the entire duration of frightened mode
             //ghost.home.Enable(ghost.home.DefDuration + 8f);
             ghost.home.AddDuration(9f);
-              
+            Debug.Log(ghost.tag + " is home when frightened starts, extending home duration.");
+
             return;
         }
+
         if (this.ghost.chase.enabled) isChase = true;
         else isChase = false;
         this.ghost.chase.Disable(); // Ensure chase mode is off when frightened
@@ -159,7 +163,6 @@ public class GhostFrightened : GhostBehavior
             Vector3 chosenDir = availableDirections[Random.Range(0, availableDirections.Count)];
             lastDirection = chosenDir;
             targetPosition = transform.localPosition + chosenDir;
-            Debug.Log(ghost.tag + " chooses direction: " + targetPosition);
             isMoving = true;
         }
     }

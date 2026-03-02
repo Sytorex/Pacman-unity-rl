@@ -7,7 +7,6 @@ public class GhostHome : GhostBehavior
         this.ghost.ResetPosition();
         this.ghost.scatter.Disable();
         this.ghost.chase.Disable();
-        this.ghost.frightened.Disable();
         speed = 0f; // Ghosts in the home do not move
     }
 
@@ -17,6 +16,6 @@ public class GhostHome : GhostBehavior
 
         //Move Ghost outside of Home
         transform.localPosition = LevelGenerator.GridToWorld(LevelData.HomeDoorPosition.x, -LevelData.HomeDoorPosition.y, LevelGenerator.GhostZLayer);
-        this.ghost.scatter.Enable(); // Enable scatter mode when leaving home
+        if(!this.ghost.frightened.enabled)this.ghost.scatter.Enable(); // Enable scatter mode when leaving home
     }
 }

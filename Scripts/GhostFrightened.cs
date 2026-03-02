@@ -61,14 +61,12 @@ public class GhostFrightened : GhostBehavior
         );
         transform.localPosition = targetPosition;
         isMoving = false;
-        Debug.Log($"{ghost.tag} frightened OnEnable - home.enabled={ghost.home.enabled}, scatter.enabled={ghost.scatter.enabled}, chase.enabled={ghost.chase.enabled}");
 
         if (ghost.home.enabled)
         {
             // no new Ghost gets out during frightened mode, but if a ghost is already in the home when frightened mode starts, it should stay there for the entire duration of frightened mode
             //ghost.home.Enable(ghost.home.DefDuration + 8f);
             ghost.home.AddDuration(9f);
-            Debug.Log(ghost.tag + " is home when frightened starts, extending home duration.");
 
             return;
         }

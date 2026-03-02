@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GhostFrightened : GhostBehavior
 {
     [SerializeField] private SpriteRenderer body;
@@ -50,8 +51,16 @@ public class GhostFrightened : GhostBehavior
 
     private void OnEnable()
     {
-        speed = 2f; // Reduce speed when frightened
+        speed = 3f; // Reduce speed when frightened
         this.eaten = false; // Reset eaten state when frightened mode starts
+        targetPosition = LevelGenerator.GridToWorld(
+             transform.localPosition.x,
+             transform.localPosition.y,
+             LevelGenerator.GhostZLayer
+        );
+        transform.localPosition = targetPosition;
+        isMoving = false;
+
         if (ghost.home.enabled)
         {
             // no new Ghost gets out during frightened mode, but if a ghost is already in the home when frightened mode starts, it should stay there for the entire duration of frightened mode
@@ -93,7 +102,6 @@ public class GhostFrightened : GhostBehavior
         eaten = true;
         // ... (tes changements de sprites)
 
-        Debug.Log(ghost.tag + " eaten! Returning to home.");
 
         // On coupe tout
         this.ghost.chase.Disable();
@@ -116,7 +124,6 @@ public class GhostFrightened : GhostBehavior
         }
         else
         {
-            Debug.Log("Frightened "+ this.ghost.tag+" moving away");
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
             if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
             {
@@ -152,6 +159,7 @@ public class GhostFrightened : GhostBehavior
             Vector3 chosenDir = availableDirections[Random.Range(0, availableDirections.Count)];
             lastDirection = chosenDir;
             targetPosition = transform.localPosition + chosenDir;
+            Debug.Log(ghost.tag + " chooses direction: " + targetPosition);
             isMoving = true;
         }
     }

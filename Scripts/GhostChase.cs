@@ -9,7 +9,6 @@ public class GhostChase : GhostBehavior
 
     private void OnDisable()
     {
-        Debug.Log("disabling Chase on " + this.tag);
         if(this.ghost.frightened.enabled) return; // If the ghost is frightened, we don't want to enable scatter or chase
         this.ghost.scatter.Enable();
     }
@@ -18,7 +17,6 @@ public class GhostChase : GhostBehavior
     {
         // set the ghost's chase behavior based on its tag
         ghostTag = this.tag;
-        Debug.Log("Chase enabled for " + ghost);
 
         //We will need to always know where pacman is
         GameObject pacman = GameObject.FindGameObjectWithTag("pacman_player");

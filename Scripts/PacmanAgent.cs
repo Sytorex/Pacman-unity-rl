@@ -3,6 +3,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using TMPro;
+using System.Collections.Generic;
 
 public class PacmanAgent : Agent
 {
@@ -110,8 +111,21 @@ public class PacmanAgent : Agent
         {
             AddReward(10f);
             other.gameObject.SetActive(false);
+
+            bool allEaten = levelGenerator.GetAllPellets().TrueForAll(p => !p.activeSelf);
+            if (allEaten)
+            {
+                AddReward(500f);
+                EndEpisode();
+            }
         } else if (other.CompareTag("pacman_power_pellet") == true)
         {
+            bool allEaten = levelGenerator.GetAllPellets().TrueForAll(p => !p.activeSelf);
+            if (allEaten)
+            {
+                AddReward(500f);
+                EndEpisode();
+            }
             AddReward(50f);
             other.gameObject.SetActive(false);
             isPowerUpActive = true;
@@ -172,6 +186,7 @@ public class PacmanAgent : Agent
             for (int x = 0; x < LevelData.Map.GetLength(1); x++)
             {
                 sensor.AddObservation((TileType)LevelData.Map[y, x] == TileType.Wall ? 1f : 0f);
+
             }
         }
 

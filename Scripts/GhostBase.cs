@@ -10,7 +10,6 @@ public class GhostBase : MonoBehaviour
     public bool isBlinky = false;
 
     public GhostBehavior initialBehavior;
-    [SerializeField] Transform Pacman;
 
     void Awake()
     {

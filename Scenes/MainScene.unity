@@ -539,7 +539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1622239536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,8 +553,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 2
-  numberOfGamesY: 2
+  numberOfGamesX: 4
+  numberOfGamesY: 4
   spacing: 2
   gameXSize: 28
   gameYSize: 31
@@ -933,6 +933,8 @@ MonoBehaviour:
   ghost: {fileID: 8842159884849524283}
   DefDuration: 20
   speed: 4
+  pacmanTransform: {fileID: 2903842536015401820}
+  blinkyTransform: {fileID: 832067493846181824}
 --- !u!4 &423035658494527421
 Transform:
   m_ObjectHideFlags: 0
@@ -966,7 +968,6 @@ MonoBehaviour:
   frightened: {fileID: 3472404522375920920}
   isBlinky: 0
   initialBehavior: {fileID: 2709573227247402670}
-  Pacman: {fileID: 988636935600281360, guid: 0fb7d99269b07ad46933b2b00d28ee42, type: 3}
 --- !u!4 &531514470923790088
 Transform:
   m_ObjectHideFlags: 0
@@ -1546,7 +1547,6 @@ MonoBehaviour:
   frightened: {fileID: 1520224539378155855}
   isBlinky: 1
   initialBehavior: {fileID: 1894070397984601799}
-  Pacman: {fileID: 988636935600281360, guid: 0fb7d99269b07ad46933b2b00d28ee42, type: 3}
 --- !u!114 &2709573227247402670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1801,7 +1801,6 @@ MonoBehaviour:
   frightened: {fileID: 1870301475126247815}
   isBlinky: 0
   initialBehavior: {fileID: 891297889179550257}
-  Pacman: {fileID: 988636935600281360, guid: 0fb7d99269b07ad46933b2b00d28ee42, type: 3}
 --- !u!58 &3432310555078315977
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -2491,6 +2490,8 @@ MonoBehaviour:
   ghost: {fileID: 3394132104342111191}
   DefDuration: 20
   speed: 4
+  pacmanTransform: {fileID: 2903842536015401820}
+  blinkyTransform: {fileID: 832067493846181824}
 --- !u!114 &6410285956547808810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2557,6 +2558,8 @@ MonoBehaviour:
   ghost: {fileID: 2591302928651387679}
   DefDuration: 20
   speed: 4
+  pacmanTransform: {fileID: 2903842536015401820}
+  blinkyTransform: {fileID: 832067493846181824}
 --- !u!4 &6673610521242757785
 Transform:
   m_ObjectHideFlags: 0
@@ -3120,7 +3123,6 @@ MonoBehaviour:
   frightened: {fileID: 5502112262362475627}
   isBlinky: 0
   initialBehavior: {fileID: 6481047165064966109}
-  Pacman: {fileID: 988636935600281360, guid: 0fb7d99269b07ad46933b2b00d28ee42, type: 3}
 --- !u!1 &8930928276714237678
 GameObject:
   m_ObjectHideFlags: 0
@@ -3219,6 +3221,8 @@ MonoBehaviour:
   ghost: {fileID: 495028590046920520}
   DefDuration: 20
   speed: 4
+  pacmanTransform: {fileID: 2903842536015401820}
+  blinkyTransform: {fileID: 832067493846181824}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

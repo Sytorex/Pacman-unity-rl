@@ -42,7 +42,6 @@ public class LevelGenerator : MonoBehaviour
     void Start()
     {
         GenerateLevel();
-        CenterCamera(LevelData.Map.GetLength(1), LevelData.Map.GetLength(0));
 
         spawnedGhosts = new List<GameObject>(ghostObjects);
         ResetLevel();
@@ -94,12 +93,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
     }
-
-    void CenterCamera(int width, int height)
-    {
-        Camera.main.transform.position = new Vector3(width / 2.0f, -height / 2.0f, -40);
-    }
-
+    
     public void ResetLevel()
     {
         // Réactive tous les pellets

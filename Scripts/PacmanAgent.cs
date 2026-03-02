@@ -112,10 +112,13 @@ public class PacmanAgent : Agent
             isPowerUpActive = true;
             Invoke("DeactivatePowerUp", 8f);
 
-            GhostBase[] ghosts = FindObjectsByType<GhostBase>(FindObjectsSortMode.None);
-
-            foreach (GhostBase ghost in ghosts)
+            foreach (GameObject ghostObject in levelGenerator.GetSpawnedGhosts())
             {
+                if (ghostObject == null) continue;
+
+                GhostBase ghost = ghostObject.GetComponent<GhostBase>();
+                if (ghost == null) continue;
+
                 if (!ghost.home.enabled)
                 {
                     ghost.frightened.Enable(8f);

@@ -4,8 +4,8 @@ public class MultipleGames : MonoBehaviour
 {
     public GameObject gamePrefab;
     public int numberOfGamesX = 3;
-    public int numberOfGamesY = 2;
-    public float spacing = 10f;
+    public int numberOfGamesY = 3;
+    public float spacing = 2f;
     public float gameXSize = 28f; // Largeur de la grille de jeu
     public float gameYSize = 31f; // Hauteur de la grille de jeu
     private GameObject[] pacmanAgents;
@@ -25,9 +25,9 @@ public class MultipleGames : MonoBehaviour
         gamePrefab.SetActive(false); // Désactive le prefab original
 
         // Centrer la caméra
-        float totalWidth = numberOfGamesX * gameXSize + (numberOfGamesX - 1) * spacing;
-        float totalHeight = numberOfGamesY * gameYSize + (numberOfGamesY - 1) * spacing;
-        Camera.main.transform.position = new Vector3(totalWidth / 2 - gameXSize / 2, totalHeight / 2 - gameYSize / 2, -15);
+        float totalWidth = numberOfGamesX * (gameXSize + spacing) - spacing;
+        float totalHeight = numberOfGamesY * (gameYSize + spacing) - spacing;
+        Camera.main.transform.position = new Vector3(totalWidth / 2, totalHeight / 2 - gameYSize, -15);
 
         // Ajuster la taille de la caméra pour que tous les jeux soient visibles
         float aspectRatio = (float)Screen.width / Screen.height;

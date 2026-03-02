@@ -2,11 +2,6 @@ using UnityEngine;
 
 public class GhostScatter : GhostBehavior
 {
-    private Vector3[] topLeftCorner = { new Vector3(1.5f, -0.5f, 0), new Vector3(1.5f, -5, 0), new Vector3(6.5f,-5,0), new Vector3(6.5f,-0.5f,0)};
-    private Vector3[] topRightCorner = { new Vector3(26.5f, -0.5f, 0) , new Vector3(26.5f, -5, 0), new Vector3(21.5f,-5,0), new Vector3(21.5f,-0.5f,0)};
-    private Vector3[] bottomLeftCorner = { new Vector3(1.5f, -25.5f, 0), new Vector3(1.5f, 18, 0), new Vector3(12.5f, -25.5f, 0), new Vector3(12.5f, -28.5f, 0) };
-    private Vector3[] bottomRightCorner = { new Vector3(26.5f, -28.5f, 0), new Vector3(15.5f, -28.5f, 0), new Vector3(15.5f, -25.5f, 0), new Vector3(26.5f, -25.5f, 0) };
-
     private Vector3[] scatterTargetList;
     private Vector3 scatterTarget;
 
@@ -43,21 +38,13 @@ public class GhostScatter : GhostBehavior
 
     void ChooseCorner()
     {
-        if (this.tag == "Blinky")
+        if (LevelData.GhostScatterTargets.TryGetValue(this.tag, out Vector3[] configuredTargets))
         {
-            scatterTargetList = topRightCorner;
-            Debug.Log("Going to top right corner");
+            scatterTargetList = configuredTargets;
+            return;
         }
 
-
-        else if (this.tag == "Pinky")
-            scatterTargetList = topLeftCorner;
-
-        else if (this.tag == "Inky")
-            scatterTargetList = bottomRightCorner;
-
-        else if (this.tag == "Clyde")
-            scatterTargetList = bottomLeftCorner;
+        scatterTargetList = new[] { transform.position };
     }
 
     void ChooseNextMoveScatter()

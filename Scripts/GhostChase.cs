@@ -188,7 +188,7 @@ public class GhostChase : GhostBehavior
 
             if (CanGhostMoveTo(potentialStep))
             {
-                if (Vector3.Distance(potentialStep, Vector3.zero) < 0.5f) continue;
+                if (Vector3.Distance(potentialStep, LevelData.InkyAvoidWorldPoint) < LevelData.InkyAvoidRadius) continue;
 
                 float dist = Vector3.Distance(potentialStep, targetGoal);
                 if (dist < minDistance)
@@ -227,7 +227,7 @@ public class GhostChase : GhostBehavior
             else
             {
                 
-                targetGoal = new Vector3(1.5f, -25.5f, 0);
+                targetGoal = LevelData.ClydeNearPacmanFallbackTarget;
             }
         }
         else

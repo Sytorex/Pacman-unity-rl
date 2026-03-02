@@ -30,7 +30,7 @@ public class GhostChase : GhostBehavior
         targetPosition = LevelGenerator.GridToWorld(
             transform.position.x,
             transform.position.y,
-             -0.1f
+            LevelGenerator.GhostZLayer
         );
         transform.position = targetPosition;
 

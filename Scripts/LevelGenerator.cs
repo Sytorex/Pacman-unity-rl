@@ -21,7 +21,11 @@ public class LevelGenerator : MonoBehaviour
     private List<GameObject> allPellets = new List<GameObject>();
     private List<GameObject> spawnedGhosts = new List<GameObject>();
 
-    public static Vector3 GridToWorld(float x, float y, float z = 0f)
+    public const float DefaultZLayer = 0f;
+    public const float GhostZLayer = -0.1f;
+    public const float PacmanZLayer = -0.5f;
+
+    public static Vector3 GridToWorld(float x, float y, float z = DefaultZLayer)
     {
         return new Vector3(Mathf.Floor(x) + 0.5f, Mathf.Floor(y) + 0.5f, z);
     }

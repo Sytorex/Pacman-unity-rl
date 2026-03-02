@@ -8,7 +8,6 @@ public class GhostScatter : GhostBehavior
     void OnEnable()
     {
         this.ghost.home.Disable();
-        Debug.Log("scatter mode on " + this.tag);
         ChooseCorner();
         isMoving = false;
     }
@@ -90,7 +89,6 @@ public class GhostScatter : GhostBehavior
     }
     private void OnDisable()
     {
-        Debug.Log("Disable Scatter on "+ this.tag);
         if(this.ghost.frightened.enabled) return; // If the ghost is frightened, we don't want to enable scatter or chase
         this.ghost.chase.Enable();
     }

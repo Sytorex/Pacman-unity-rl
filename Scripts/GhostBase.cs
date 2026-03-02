@@ -46,8 +46,6 @@ public class GhostBase : MonoBehaviour
 
         if (initialBehavior != null)
         {
-            Debug.Log("Enabling initial behavior: " + initialBehavior.GetType().Name);
-
             initialBehavior.Enable();
         }
     }

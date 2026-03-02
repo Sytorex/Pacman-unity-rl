@@ -141,7 +141,6 @@ public class PacmanAgent : Agent
             }
             else
             {
-                Debug.Log("Collision avec un fantôme !");
                 AddReward(-100f);
                 EndEpisode();
             }

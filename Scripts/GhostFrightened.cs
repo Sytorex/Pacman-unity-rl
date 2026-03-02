@@ -159,7 +159,6 @@ public class GhostFrightened : GhostBehavior
             Vector3 chosenDir = availableDirections[Random.Range(0, availableDirections.Count)];
             lastDirection = chosenDir;
             targetPosition = transform.localPosition + chosenDir;
-            Debug.Log(ghost.tag + " chooses direction: " + targetPosition);
             isMoving = true;
         }
     }

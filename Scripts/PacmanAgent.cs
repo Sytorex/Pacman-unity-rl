@@ -18,7 +18,8 @@ public class PacmanAgent : Agent
     private const float PowerUpDuration = 8f;
     private Vector3 currentMoveDir = Vector3.zero;
     private bool isReady = false;
-
+    public int score = 0;
+    private int multiplierScore = 1;
 
     public override void OnEpisodeBegin()
     {
@@ -110,6 +111,7 @@ public class PacmanAgent : Agent
         if (other.CompareTag("pacman_pellet") == true)
         {
             AddReward(10f);
+            score += 10;
             other.gameObject.SetActive(false);
 
             bool allEaten = levelGenerator.GetAllPellets().TrueForAll(p => !p.activeSelf);
@@ -126,6 +128,7 @@ public class PacmanAgent : Agent
                 AddReward(500f);
                 EndEpisode();
             }
+            score += 50;
             AddReward(50f);
             other.gameObject.SetActive(false);
             isPowerUpActive = true;
@@ -155,6 +158,8 @@ public class PacmanAgent : Agent
             if (isPowerUpActive)
             {
                 AddReward(200f);
+                score += multiplierScore*200;
+                multiplierScore *= 2;
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
             else
@@ -167,6 +172,7 @@ public class PacmanAgent : Agent
 
     private void DeactivatePowerUp()
     {
+        multiplierScore = 1;
         isPowerUpActive = false;
         powerUpEndTime = 0f;
     }

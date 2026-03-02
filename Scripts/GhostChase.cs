@@ -98,6 +98,7 @@ public class GhostChase : GhostBehavior
             targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
+        Debug.Log($"{ghostTag} at {transform.localPosition} chooses direction {bestDirection} towards target {targetGoal}");
     }
 
     void ChooseNextMovePinky()

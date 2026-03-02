@@ -10,7 +10,6 @@ public class LevelGenerator : MonoBehaviour
     public TileBase doorTile;
 
     [Header("Elements")]
-    public GameObject mobsContainer;
     public GameObject pelletContainer;
     public GameObject pacmanObject;
     public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
@@ -19,13 +18,11 @@ public class LevelGenerator : MonoBehaviour
     public GameObject pelletPrefab;
     public GameObject powerPelletPrefab;
 
-
-    private List<GameObject> allPellets = new List<GameObject>();
-    private List<GameObject> spawnedGhosts = new List<GameObject>();
-
     public const float DefaultZLayer = 0f;
     public const float GhostZLayer = -0.1f;
     public const float PacmanZLayer = -0.5f;
+    private List<GameObject> allPellets = new List<GameObject>();
+    private List<GameObject> spawnedGhosts = new List<GameObject>();
 
     public static Vector3 GridToWorld(float x, float y, float z = DefaultZLayer)
     {
@@ -36,13 +33,11 @@ public class LevelGenerator : MonoBehaviour
     {
         // Clear any existing tiles in the tilemap
         tilemap.ClearAllTiles();
-        if (mobsContainer == null) mobsContainer = this.gameObject;
     }
 
     void Start()
     {
         GenerateLevel();
-
         spawnedGhosts = new List<GameObject>(ghostObjects);
         ResetLevel();
     }

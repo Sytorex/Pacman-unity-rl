@@ -269,7 +269,6 @@ MonoBehaviour:
   tilemap: {fileID: 1908745982}
   wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
   doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
-  mobsContainer: {fileID: 0}
   pelletContainer: {fileID: 0}
   pacmanObject: {fileID: 0}
   ghostObjects: []
@@ -385,7 +384,6 @@ MonoBehaviour:
   tilemap: {fileID: 1908745982}
   wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
   doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
-  mobsContainer: {fileID: 0}
   pelletContainer: {fileID: 32261631}
   pacmanObject: {fileID: 8313447529644925690}
   ghostObjects:
@@ -541,7 +539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1622239536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -555,8 +553,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 3
-  numberOfGamesY: 3
+  numberOfGamesX: 2
+  numberOfGamesY: 2
   spacing: 2
   gameXSize: 28
   gameYSize: 31
@@ -2393,7 +2391,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: Pacman
   TeamId: 0
   m_UseChildSensors: 1

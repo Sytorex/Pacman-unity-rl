@@ -51,10 +51,10 @@ public class PacmanAgent : Agent
         var discreteActions = actionsOut.DiscreteActions;
 
         // On capture la nouvelle direction, mais on ne l'applique pas encore forcément
-        if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.UpArrow)) nextAction = 1;
-        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) nextAction = 2;
-        else if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftArrow)) nextAction = 3;
-        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) nextAction = 4;
+        if (Input.GetKey(KeyCode.Z) || Input.GetKey(KeyCode.UpArrow)) nextAction = 0;
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) nextAction = 1;
+        else if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.LeftArrow)) nextAction = 2;
+        else if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow)) nextAction = 3;
 
         discreteActions[0] = nextAction;
     }
@@ -66,10 +66,10 @@ public class PacmanAgent : Agent
         int action = actions.DiscreteActions[0];
         Vector3 wantedDir = Vector3.zero;
         float rotation = 0f;
-        if (action == 1) { wantedDir = Vector3.up; rotation = 90f; }
-        else if (action == 2) { wantedDir = Vector3.down; rotation = -90f; }
-        else if (action == 3) { wantedDir = Vector3.left; rotation = 180f; }
-        else if (action == 4) { wantedDir = Vector3.right; rotation = 0f; }
+        if (action == 0) { wantedDir = Vector3.up; rotation = 90f; }
+        else if (action == 1) { wantedDir = Vector3.down; rotation = -90f; }
+        else if (action == 2) { wantedDir = Vector3.left; rotation = 180f; }
+        else if (action == 3) { wantedDir = Vector3.right; rotation = 0f; }
 
         
         if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.localPosition, wantedDir, 1f, wallLayer))
@@ -210,13 +210,24 @@ public class PacmanAgent : Agent
         }
         
         // Position et état des fantômes
-        foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
+        // Si longueur == 0, on ajoute 4*3 observations à 0
+        if (levelGenerator.GetSpawnedGhosts().Count == 0)
         {
-            sensor.AddObservation(ghost.transform.localPosition.x / LevelData.Map.GetLength(1));
-            sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / LevelData.Map.GetLength(0));
-            
-            GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
-            sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
+            for (int i = 0; i < 4; i++)
+            {
+                sensor.AddObservation(0f); // x
+                sensor.AddObservation(0f); // y
+                sensor.AddObservation(0f); // frightened
+            }
+        } else {
+            foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
+            {
+                sensor.AddObservation(ghost.transform.localPosition.x / LevelData.Map.GetLength(1));
+                sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / LevelData.Map.GetLength(0));
+                
+                GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
+                sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
+            }
         }
 
         // Position de Pacman normalisée

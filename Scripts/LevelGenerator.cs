@@ -10,6 +10,7 @@ public class LevelGenerator : MonoBehaviour
     public TileBase doorTile;
 
     [Header("Elements")]
+    public GameObject mobsContainer;
     public GameObject pelletContainer;
     public GameObject pacmanObject;
     public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
@@ -17,6 +18,7 @@ public class LevelGenerator : MonoBehaviour
     [Header("Prefabs")]
     public GameObject pelletPrefab;
     public GameObject powerPelletPrefab;
+
 
     private List<GameObject> allPellets = new List<GameObject>();
     private List<GameObject> spawnedGhosts = new List<GameObject>();
@@ -28,6 +30,13 @@ public class LevelGenerator : MonoBehaviour
     public static Vector3 GridToWorld(float x, float y, float z = DefaultZLayer)
     {
         return new Vector3(Mathf.Floor(x) + 0.5f, Mathf.Floor(y) + 0.5f, z);
+    }
+
+    void Awake()
+    {
+        // Clear any existing tiles in the tilemap
+        tilemap.ClearAllTiles();
+        if (mobsContainer == null) mobsContainer = this.gameObject;
     }
 
     void Start()
@@ -62,12 +71,14 @@ public class LevelGenerator : MonoBehaviour
                         break;
 
                     case TileType.Pellet:
-                        pellet=Instantiate(pelletPrefab, localPos, Quaternion.identity, pelletContainer.transform);
+                        pellet = Instantiate(pelletPrefab, pelletContainer.transform);
+                        pellet.transform.localPosition = localPos;
                         allPellets.Add(pellet);
                         break;
 
                     case TileType.PowerPellet:
-                        pellet=Instantiate(powerPelletPrefab, localPos, Quaternion.identity, pelletContainer.transform);
+                        pellet = Instantiate(powerPelletPrefab, pelletContainer.transform);
+                        pellet.transform.localPosition = localPos;
                         allPellets.Add(pellet);
                         break;
                     

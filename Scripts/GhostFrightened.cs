@@ -117,10 +117,10 @@ public class GhostFrightened : GhostBehavior
         else
         {
             Debug.Log("Frightened "+ this.ghost.tag+" moving away");
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, targetPosition) < 0.001f)
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
+            if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
             {
-                transform.position = targetPosition; // Snap to grid
+                transform.localPosition = targetPosition; // Snap to grid
                 isMoving = false;
             }
         }
@@ -137,7 +137,7 @@ public class GhostFrightened : GhostBehavior
             if (dir == -lastDirection && directions.Length > 1) continue;
 
             // 2. Vérifier la grille de données au lieu de la physique
-            if (CanGhostMoveTo(transform.position + dir))
+            if (CanGhostMoveTo(transform.localPosition + dir))
             {
                 availableDirections.Add(dir);
             }
@@ -151,7 +151,7 @@ public class GhostFrightened : GhostBehavior
         {
             Vector3 chosenDir = availableDirections[Random.Range(0, availableDirections.Count)];
             lastDirection = chosenDir;
-            targetPosition = transform.position + chosenDir;
+            targetPosition = transform.localPosition + chosenDir;
             isMoving = true;
         }
     }

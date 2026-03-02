@@ -26,8 +26,8 @@ public class PacmanAgent : Agent
         currentMoveDir = Vector3.zero;
 
         Vector2Int startPos = LevelData.PacmanStartPosition;
-        transform.position = LevelGenerator.GridToWorld(startPos.x, -startPos.y, LevelGenerator.PacmanZLayer);
-        targetPosition = transform.position;
+        transform.localPosition = LevelGenerator.GridToWorld(startPos.x, -startPos.y, LevelGenerator.PacmanZLayer);
+        targetPosition = transform.localPosition;
 
         transform.eulerAngles = Vector3.zero;
 
@@ -76,7 +76,7 @@ public class PacmanAgent : Agent
         {
             if (!Physics2D.Raycast(transform.position, currentMoveDir, 1f, wallLayer))
             {
-                targetPosition = transform.position + currentMoveDir;
+                targetPosition = transform.localPosition + currentMoveDir;
                 StartCoroutine(SmoothMove());
             }
             else
@@ -90,12 +90,12 @@ public class PacmanAgent : Agent
     System.Collections.IEnumerator SmoothMove()
     {
         isMoving = true;
-        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+        while (Vector3.Distance(transform.localPosition, targetPosition) > 0.01f)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, moveSpeed * Time.deltaTime);
             yield return null;
         }
-        transform.position = targetPosition;
+        transform.localPosition = targetPosition;
         isMoving = false;
     }
 

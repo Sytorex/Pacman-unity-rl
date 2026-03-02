@@ -21,13 +21,13 @@ public class GhostScatter : GhostBehavior
         }
         else
         {
-            transform.position = Vector3.MoveTowards(
-                transform.position,
+            transform.localPosition = Vector3.MoveTowards(
+                transform.localPosition,
                 targetPosition,
                 speed * Time.deltaTime
             );
 
-            if (Vector3.Distance(transform.position, targetPosition) < 0.001f)
+            if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
             {
                 isMoving = false;
                 //change target in assigned corner
@@ -44,7 +44,7 @@ public class GhostScatter : GhostBehavior
             return;
         }
 
-        scatterTargetList = new[] { transform.position };
+        scatterTargetList = new[] { transform.localPosition };
     }
 
     void ChooseNextMoveScatter()
@@ -62,7 +62,7 @@ public class GhostScatter : GhostBehavior
             if (dir == -lastDirection) continue;
 
             //check if we can move in this direction by looking at the level data
-            Vector3 potentialStep = transform.position + dir;
+            Vector3 potentialStep = transform.localPosition + dir;
             if (CanGhostMoveTo(potentialStep))
             {
                 //we calculaate the distance from this potential step to pacman, and we want to minimize it
@@ -84,7 +84,7 @@ public class GhostScatter : GhostBehavior
         if (bestDirection != Vector3.zero)
         {
             lastDirection = bestDirection;
-            targetPosition = transform.position + bestDirection;
+            targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
     }

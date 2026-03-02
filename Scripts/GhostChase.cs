@@ -28,11 +28,11 @@ public class GhostChase : GhostBehavior
         if (blinky != null) blinkyTransform = blinky.transform;
 
         targetPosition = LevelGenerator.GridToWorld(
-            transform.position.x,
-            transform.position.y,
+            transform.localPosition.x,
+            transform.localPosition.y,
             LevelGenerator.GhostZLayer
         );
-        transform.position = targetPosition;
+        transform.localPosition = targetPosition;
 
     }
 
@@ -51,10 +51,10 @@ public class GhostChase : GhostBehavior
         }
         else
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, targetPosition) < 0.001f)
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
+            if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
             {
-                transform.position = targetPosition; // Snap to grid
+                transform.localPosition = targetPosition; // Snap to grid
                 isMoving = false;
             }
         }
@@ -67,7 +67,7 @@ public class GhostChase : GhostBehavior
         float minDistance = float.MaxValue;
 
         //if we dont see where pacman is, we will just stay afk
-        Vector3 targetGoal = (pacmanTransform != null) ? pacmanTransform.position : transform.position;
+        Vector3 targetGoal = (pacmanTransform != null) ? pacmanTransform.localPosition : transform.localPosition;
 
         foreach (Vector3 dir in directions)
         {
@@ -75,7 +75,7 @@ public class GhostChase : GhostBehavior
             if (dir == -lastDirection) continue;
 
             //check if we can move in this direction by looking at the level data
-            Vector3 potentialStep = transform.position + dir;
+            Vector3 potentialStep = transform.localPosition + dir;
             if (CanGhostMoveTo(potentialStep))
             {
                 //we calculaate the distance from this potential step to pacman, and we want to minimize it
@@ -97,7 +97,7 @@ public class GhostChase : GhostBehavior
         if (bestDirection != Vector3.zero)
         {
             lastDirection = bestDirection;
-            targetPosition = transform.position + bestDirection;
+            targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
     }
@@ -114,7 +114,7 @@ public class GhostChase : GhostBehavior
         if (pacmanTransform != null)
         {
             //on récupère la position de pacman
-            Vector3 pacmanPos = pacmanTransform.position;
+            Vector3 pacmanPos = pacmanTransform.localPosition;
 
             //on récupère la direction de pacman
             Vector3 pacmanForward = pacmanTransform.right;
@@ -124,7 +124,7 @@ public class GhostChase : GhostBehavior
         }
         else
         {
-            currentTargetGoal = transform.position;
+            currentTargetGoal = transform.localPosition;
         }
         // On évalue les 4 directions possibles
         foreach (Vector3 dir in directions)
@@ -132,7 +132,7 @@ public class GhostChase : GhostBehavior
             // Interdiction de faire demi-tour
             if (dir == -lastDirection) continue;
 
-            Vector3 potentialStep = transform.position + dir;
+            Vector3 potentialStep = transform.localPosition + dir;
             if (CanGhostMoveTo(potentialStep))
             {
                 float dist = Vector3.Distance(potentialStep, currentTargetGoal);
@@ -149,7 +149,7 @@ public class GhostChase : GhostBehavior
         if (bestDirection != Vector3.zero)
         {
             lastDirection = bestDirection;
-            targetPosition = transform.position + bestDirection;
+            targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
     }
@@ -166,25 +166,25 @@ public class GhostChase : GhostBehavior
             
             Vector3 pacmanDir = pacmanTransform.right;
 
-            Vector3 pivotPoint = pacmanTransform.position + (pacmanDir * 2);
+            Vector3 pivotPoint = pacmanTransform.localPosition + (pacmanDir * 2);
 
-            Vector3 blinkyToPivot = pivotPoint - blinkyTransform.position;
+            Vector3 blinkyToPivot = pivotPoint - blinkyTransform.localPosition;
 
-            targetGoal = blinkyTransform.position + (blinkyToPivot * 2);
+            targetGoal = blinkyTransform.localPosition + (blinkyToPivot * 2);
 
             Debug.DrawLine(blinkyTransform.position, targetGoal, Color.cyan);
             Debug.DrawLine(pacmanTransform.position, pivotPoint, Color.yellow);
         }
         else
         {
-            targetGoal = transform.position;
+            targetGoal = transform.localPosition;
         }
 
         foreach (Vector3 dir in directions)
         {
             if (dir == -lastDirection) continue;
 
-            Vector3 potentialStep = transform.position + dir;
+            Vector3 potentialStep = transform.localPosition + dir;
 
             if (CanGhostMoveTo(potentialStep))
             {
@@ -202,7 +202,7 @@ public class GhostChase : GhostBehavior
         if (bestDirection == Vector3.zero) bestDirection = -lastDirection;
 
         lastDirection = bestDirection;
-        targetPosition = transform.position + bestDirection;
+        targetPosition = transform.localPosition + bestDirection;
         isMoving = true;
     }
 
@@ -216,13 +216,13 @@ public class GhostChase : GhostBehavior
         if (pacmanTransform != null)
         {
             // 1. Calculer la distance actuelle entre Clyde et Pac-Man
-            float distanceToPacman = Vector3.Distance(transform.position, pacmanTransform.position);
+            float distanceToPacman = Vector3.Distance(transform.localPosition, pacmanTransform.localPosition);
 
             // 2. Déterminer la cible selon la distance (8 cases est le standard)
             if (distanceToPacman > 8f)
             {
                 // Clyde est loin : il cible directement Pac-Man
-                targetGoal = pacmanTransform.position;
+                targetGoal = pacmanTransform.localPosition;
             }
             else
             {
@@ -232,14 +232,14 @@ public class GhostChase : GhostBehavior
         }
         else
         {
-            targetGoal = transform.position;
+            targetGoal = transform.localPosition;
         }
 
         foreach (Vector3 dir in directions)
         {
             if (dir == -lastDirection) continue;
 
-            Vector3 potentialStep = transform.position + dir;
+            Vector3 potentialStep = transform.localPosition + dir;
 
             if (CanGhostMoveTo(potentialStep))
             {
@@ -257,7 +257,7 @@ public class GhostChase : GhostBehavior
         if (bestDirection != Vector3.zero)
         {
             lastDirection = bestDirection;
-            targetPosition = transform.position + bestDirection;
+            targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
     }

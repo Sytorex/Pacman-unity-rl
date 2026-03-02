@@ -76,7 +76,7 @@ public class GhostBehavior : MonoBehaviour
             // 1. Éviter le demi-tour immédiat
             if (dir == -lastDirection && directions.Length > 1) continue;
             // 2. Vérifier la grille de données au lieu de la physique
-            if (CanGhostMoveTo(transform.position + dir))
+            if (CanGhostMoveTo(transform.localPosition + dir))
             {
                 availableDirections.Add(dir);
             }

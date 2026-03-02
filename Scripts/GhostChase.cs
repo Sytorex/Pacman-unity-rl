@@ -7,16 +7,6 @@ public class GhostChase : GhostBehavior
     public Transform pacmanTransform;
     public Transform blinkyTransform;
 
-    private Vector3 LocalToWorldPoint(Vector3 localPoint)
-    {
-        return transform.parent != null ? transform.parent.TransformPoint(localPoint) : localPoint;
-    }
-
-    private void DrawGhostToTargetLine(Vector3 targetLocal, Color color)
-    {
-        // Debug.DrawLine(transform.localPosition, targetLocal, color);
-    }
-
     private void OnDisable()
     {
         if(this.ghost.frightened.enabled) return; // If the ghost is frightened, we don't want to enable scatter or chase
@@ -69,7 +59,6 @@ public class GhostChase : GhostBehavior
 
         //if we dont see where pacman is, we will just stay afk
         Vector3 targetGoal = (pacmanTransform != null) ? pacmanTransform.localPosition : transform.localPosition;
-        DrawGhostToTargetLine(targetGoal, Color.red);
 
         foreach (Vector3 dir in directions)
         {
@@ -102,7 +91,6 @@ public class GhostChase : GhostBehavior
             targetPosition = transform.localPosition + bestDirection;
             isMoving = true;
         }
-        Debug.Log($"{ghostTag} at {transform.localPosition} chooses direction {bestDirection} towards target {targetGoal}");
     }
 
     void ChooseNextMovePinky()
@@ -129,7 +117,6 @@ public class GhostChase : GhostBehavior
         {
             currentTargetGoal = transform.localPosition;
         }
-        DrawGhostToTargetLine(currentTargetGoal, new Color(1f, 0.4f, 0.7f));
 
         // On évalue les 4 directions possibles
         foreach (Vector3 dir in directions)
@@ -177,14 +164,11 @@ public class GhostChase : GhostBehavior
 
             targetGoal = blinkyTransform.localPosition + (blinkyToPivot * 2);
 
-            Debug.DrawLine(blinkyTransform.localPosition, targetGoal, Color.cyan);
-            Debug.DrawLine(pacmanTransform.localPosition, pivotPoint, Color.yellow);
         }
         else
         {
             targetGoal = transform.localPosition;
         }
-        DrawGhostToTargetLine(targetGoal, Color.cyan);
 
         foreach (Vector3 dir in directions)
         {
@@ -240,7 +224,6 @@ public class GhostChase : GhostBehavior
         {
             targetGoal = transform.localPosition;
         }
-        DrawGhostToTargetLine(targetGoal, new Color(1f, 0.5f, 0f));
 
         foreach (Vector3 dir in directions)
         {

@@ -71,7 +71,7 @@ public class PacmanAgent : Agent
         else if (action == 4) { wantedDir = Vector3.right; rotation = 0f; }
 
         
-        if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.position, wantedDir, 1f, wallLayer))
+        if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.localPosition, wantedDir, 1f, wallLayer))
         {
             currentMoveDir = wantedDir;
             transform.eulerAngles = new Vector3(0, 0, rotation);
@@ -79,7 +79,7 @@ public class PacmanAgent : Agent
 
         if (currentMoveDir != Vector3.zero)
         {
-            if (!Physics2D.Raycast(transform.position, currentMoveDir, 1f, wallLayer))
+            if (!Physics2D.Raycast(transform.localPosition, currentMoveDir, 1f, wallLayer))
             {
                 targetPosition = transform.localPosition + currentMoveDir;
                 StartCoroutine(SmoothMove());
@@ -194,16 +194,16 @@ public class PacmanAgent : Agent
         // Position et état des fantômes
         foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
         {
-            sensor.AddObservation(ghost.transform.position.x / LevelData.Map.GetLength(1));
-            sensor.AddObservation(Mathf.Abs(ghost.transform.position.y) / LevelData.Map.GetLength(0));
+            sensor.AddObservation(ghost.transform.localPosition.x / LevelData.Map.GetLength(1));
+            sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / LevelData.Map.GetLength(0));
             
             GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
-            sensor.AddObservation(frightened != null && frightened.enabled ? 1f : 0f);
+            sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
         }
 
         // Position de Pacman normalisée
-        sensor.AddObservation(transform.position.x / LevelData.Map.GetLength(1));
-        sensor.AddObservation(Mathf.Abs(transform.position.y) / LevelData.Map.GetLength(0));
+        sensor.AddObservation(transform.localPosition.x / LevelData.Map.GetLength(1));
+        sensor.AddObservation(Mathf.Abs(transform.localPosition.y) / LevelData.Map.GetLength(0));
 
         sensor.AddObservation(GetPowerUpObservation());
     }

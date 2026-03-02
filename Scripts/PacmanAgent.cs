@@ -13,6 +13,8 @@ public class PacmanAgent : Agent
     private bool isMoving = false;
     private int nextAction = 0;
     private bool isPowerUpActive = false;
+    private float powerUpEndTime = 0f;
+    private const float PowerUpDuration = 8f;
     private Vector3 currentMoveDir = Vector3.zero;
     private bool isReady = false;
 
@@ -24,6 +26,9 @@ public class PacmanAgent : Agent
 
         nextAction = 0;
         currentMoveDir = Vector3.zero;
+        isPowerUpActive = false;
+        powerUpEndTime = 0f;
+        CancelInvoke(nameof(DeactivatePowerUp));
 
         Vector2Int startPos = LevelData.PacmanStartPosition;
         transform.localPosition = LevelGenerator.GridToWorld(startPos.x, -startPos.y, LevelGenerator.PacmanZLayer);
@@ -110,7 +115,9 @@ public class PacmanAgent : Agent
             AddReward(50f);
             other.gameObject.SetActive(false);
             isPowerUpActive = true;
-            Invoke("DeactivatePowerUp", 8f);
+            powerUpEndTime = Time.time + PowerUpDuration;
+            CancelInvoke(nameof(DeactivatePowerUp));
+            Invoke(nameof(DeactivatePowerUp), PowerUpDuration);
 
             foreach (GameObject ghostObject in levelGenerator.GetSpawnedGhosts())
             {
@@ -121,7 +128,7 @@ public class PacmanAgent : Agent
 
                 if (!ghost.home.enabled)
                 {
-                    ghost.frightened.Enable(8f);
+                    ghost.frightened.Enable(PowerUpDuration);
                 }
             }
         }
@@ -144,6 +151,7 @@ public class PacmanAgent : Agent
     private void DeactivatePowerUp()
     {
         isPowerUpActive = false;
+        powerUpEndTime = 0f;
     }
 
     private float GetPelletObs(TileType cellValue)
@@ -165,7 +173,6 @@ public class PacmanAgent : Agent
         }
 
         // Grille des pellets actifs
-        // On créé une grille de bools pour les pellets, 1f si le pellet est actif, 0f s'il a été mangé (ou s'il n'y en avait pas à la base)
         for (int y = 0; y < LevelData.Map.GetLength(0); y++)
         {
             for (int x = 0; x < LevelData.Map.GetLength(1); x++)
@@ -184,7 +191,7 @@ public class PacmanAgent : Agent
             }
         }
         
-       
+        // Position et état des fantômes
         foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
         {
             sensor.AddObservation(ghost.transform.position.x / LevelData.Map.GetLength(1));
@@ -194,9 +201,24 @@ public class PacmanAgent : Agent
             sensor.AddObservation(frightened != null && frightened.enabled ? 1f : 0f);
         }
 
+        // Position de Pacman normalisée
         sensor.AddObservation(transform.position.x / LevelData.Map.GetLength(1));
         sensor.AddObservation(Mathf.Abs(transform.position.y) / LevelData.Map.GetLength(0));
 
-        // Il faut qu'on gère l'apprentissage de manger les phantomes (genre gérer le temps de la power pellet, et savoir si les fantomes sont en mode frightened ou pas etc)
+        sensor.AddObservation(GetPowerUpObservation());
+    }
+
+    private float GetPowerUpObservation()
+    {
+        if (isPowerUpActive)
+        {
+            float remainingPowerUpTime = Mathf.Max(0f, powerUpEndTime - Time.time);
+            float normalizedRemainingPowerUpTime = remainingPowerUpTime / PowerUpDuration;
+            return normalizedRemainingPowerUpTime;
+        }
+        else
+        {
+            return 0f;
+        }
     }
 }

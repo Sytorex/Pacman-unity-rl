@@ -36,7 +36,7 @@ public class PacmanAgent : Agent
 
     void Start()
     {
-        Invoke("SetReady", 0.1f);
+        Invoke("SetReady", 0.5f);
     }
     void SetReady() { isReady = true; }
 

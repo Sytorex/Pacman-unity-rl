@@ -172,8 +172,8 @@ public class GhostChase : GhostBehavior
 
             targetGoal = blinkyTransform.localPosition + (blinkyToPivot * 2);
 
-            Debug.DrawLine(blinkyTransform.position, targetGoal, Color.cyan);
-            Debug.DrawLine(pacmanTransform.position, pivotPoint, Color.yellow);
+            Debug.DrawLine(blinkyTransform.localPosition, targetGoal, Color.cyan);
+            Debug.DrawLine(pacmanTransform.localPosition, pivotPoint, Color.yellow);
         }
         else
         {

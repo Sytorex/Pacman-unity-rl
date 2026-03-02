@@ -143,33 +143,57 @@ public class PacmanAgent : Agent
         isPowerUpActive = false;
     }
 
-/*
+    private float GetPelletObs(TileType cellValue)
+    {
+        if (cellValue == TileType.Pellet) return 0.5f;
+        else if (cellValue == TileType.PowerPellet) return 1f;
+        else return 0f;
+    }
+
     public override void CollectObservations(VectorSensor sensor)
     {
-       
-        sensor.AddObservation(transform.position.x / LevelData.Map.GetLength(1));
-        sensor.AddObservation(Mathf.Abs(transform.position.y) / LevelData.Map.GetLength(0));
-
-        
+        // Grille de murs (28x31 = 868 observations)
         for (int y = 0; y < LevelData.Map.GetLength(0); y++)
         {
             for (int x = 0; x < LevelData.Map.GetLength(1); x++)
             {
-                sensor.AddObservation(LevelData.Map[y, x] / 4f); // Normalisé (0 à 1)
+                sensor.AddObservation((TileType)LevelData.Map[y, x] == TileType.Wall ? 1f : 0f);
             }
         }
 
-        
-        foreach (GameObject pellet in levelGenerator.allPellets)
+        // Grille des pellets actifs
+        // On créé une grille de bools pour les pellets, 1f si le pellet est actif, 0f s'il a été mangé (ou s'il n'y en avait pas à la base)
+        for (int y = 0; y < LevelData.Map.GetLength(0); y++)
         {
-            sensor.AddObservation(pellet.activeSelf ? 1f : 0f);
+            for (int x = 0; x < LevelData.Map.GetLength(1); x++)
+            {
+                TileType cellValue = (TileType)LevelData.Map[y, x];
+                if (cellValue == TileType.Pellet || cellValue == TileType.PowerPellet)
+                {
+                    // Trouve le pellet correspondant dans la liste des pellets actifs
+                    GameObject pellet = levelGenerator.GetAllPellets().Find(p => p.transform.localPosition == LevelGenerator.GridToWorld(x, -y));
+                    sensor.AddObservation((pellet != null && pellet.activeSelf) ? GetPelletObs(cellValue) : 0f);
+                }
+                else
+                {
+                    sensor.AddObservation(0f);
+                }
+            }
         }
-
-        foreach (GameObject ghost in levelGenerator.spawnedGhosts)
+        
+       
+        foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
         {
             sensor.AddObservation(ghost.transform.position.x / LevelData.Map.GetLength(1));
             sensor.AddObservation(Mathf.Abs(ghost.transform.position.y) / LevelData.Map.GetLength(0));
+            
+            GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
+            sensor.AddObservation(frightened != null && frightened.enabled ? 1f : 0f);
         }
+
+        sensor.AddObservation(transform.position.x / LevelData.Map.GetLength(1));
+        sensor.AddObservation(Mathf.Abs(transform.position.y) / LevelData.Map.GetLength(0));
+
+        // Il faut qu'on gère l'apprentissage de manger les phantomes (genre gérer le temps de la power pellet, et savoir si les fantomes sont en mode frightened ou pas etc)
     }
-    */
 }

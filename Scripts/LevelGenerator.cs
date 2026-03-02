@@ -121,4 +121,7 @@ public class LevelGenerator : MonoBehaviour
             }
         }
     }
+
+    public List<GameObject> GetAllPellets() => allPellets;
+    public List<GameObject> GetSpawnedGhosts() => spawnedGhosts;
 }

@@ -241,7 +241,8 @@ public class PacmanAgent : Agent
         if (allEaten)
         {
             Debug.Log($"All pellets eaten in {CountStep} steps!");
-            AddReward(1000f - CountStep * 0.001f); 
+            float WinReward = 1000f - (CountStep-100);
+            AddReward(Mathf.Max(100f, WinReward)); 
             EndEpisode();
             return true;
         }

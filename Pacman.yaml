@@ -10,6 +10,8 @@ behaviors:
       lambd: 0.95
       num_epoch: 10
       learning_rate_schedule: linear
+    checkpoint_interval: 100000
+    keep_checkpoints: 50
     network_settings:
       normalize: true
       hidden_units: 256

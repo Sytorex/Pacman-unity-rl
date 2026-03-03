@@ -11,8 +11,6 @@ public class LevelGenerator : MonoBehaviour
 
     [Header("Elements")]
     public GameObject pelletContainer;
-    public GameObject pacmanObject;
-    public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
 
     [Header("Prefabs")]
     public GameObject pelletPrefab;
@@ -21,31 +19,25 @@ public class LevelGenerator : MonoBehaviour
     public const float DefaultZLayer = 0f;
     public const float GhostZLayer = -0.1f;
     public const float PacmanZLayer = -0.5f;
-    private List<GameObject> allPellets = new List<GameObject>();
-    private List<GameObject> spawnedGhosts = new List<GameObject>();
 
     public static Vector3 GridToWorld(float x, float y, float z = DefaultZLayer)
     {
         return new Vector3(Mathf.Floor(x) + 0.5f, Mathf.Floor(y) + 0.5f, z);
     }
 
-    void Awake()
+    public static Vector2Int WorldToGrid(Vector3 worldPos)
     {
-        // Clear any existing tiles in the tilemap
-        tilemap.ClearAllTiles();
+        return new Vector2Int(Mathf.FloorToInt(worldPos.x), Mathf.FloorToInt(worldPos.y));
     }
 
-    void Start()
+    public List<GameObject> GenerateLevel()
     {
-        GenerateLevel();
-        spawnedGhosts = new List<GameObject>(ghostObjects);
-        ResetLevel();
-    }
-
-    void GenerateLevel()
-    {
+        List<GameObject> pellets = new List<GameObject>();
         int[,] map = LevelData.Map;
         GameObject pellet;
+
+        tilemap.ClearAllTiles();
+
         for (int y = 0; y < map.GetLength(0); y++) 
         {
             for (int x = 0; x < map.GetLength(1); x++)
@@ -67,13 +59,13 @@ public class LevelGenerator : MonoBehaviour
                     case TileType.Pellet:
                         pellet = Instantiate(pelletPrefab, pelletContainer.transform);
                         pellet.transform.localPosition = localPos;
-                        allPellets.Add(pellet);
+                        pellets.Add(pellet);
                         break;
 
                     case TileType.PowerPellet:
                         pellet = Instantiate(powerPelletPrefab, pelletContainer.transform);
                         pellet.transform.localPosition = localPos;
-                        allPellets.Add(pellet);
+                        pellets.Add(pellet);
                         break;
                     
                     case TileType.GhostHouseDoor:
@@ -87,30 +79,7 @@ public class LevelGenerator : MonoBehaviour
                 }
             }
         }
-    }
-    
-    public void ResetLevel()
-    {
-        // Réactive tous les pellets
-        foreach (GameObject pellet in allPellets)
-        {
-            if (pellet != null) pellet.SetActive(true);
-        }
 
-        // Réinitialise la position des fantômes
-        for (int i = 0; i < spawnedGhosts.Count; i++)
-        {
-            if (spawnedGhosts[i] != null)
-            {
-                GhostBase ghostBase = spawnedGhosts[i].GetComponent<GhostBase>();
-                if (ghostBase != null)
-                {
-                    ghostBase.ResetState(); 
-                }
-            }
-        }
+        return pellets;
     }
-
-    public List<GameObject> GetAllPellets() => allPellets;
-    public List<GameObject> GetSpawnedGhosts() => spawnedGhosts;
 }

@@ -2,7 +2,6 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
-using TMPro;
 using System.Collections.Generic;
 
 public class PacmanAgent : Agent
@@ -10,6 +9,8 @@ public class PacmanAgent : Agent
     public float moveSpeed = 5f;
     public LevelGenerator levelGenerator;
     public LayerMask wallLayer;
+    public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
+
     private Vector3 targetPosition;
     private bool isMoving = false;
     private int nextAction = 0;
@@ -20,11 +21,35 @@ public class PacmanAgent : Agent
     private bool isReady = false;
     public int score = 0;
     private int multiplierScore = 1;
+    private List<GameObject> pellets = new List<GameObject>();
+    private List<GameObject> ghosts = new List<GameObject>();
+    private readonly Dictionary<Vector2Int, GameObject> pelletByGrid = new Dictionary<Vector2Int, GameObject>();
+    private float lastNearestPelletDistance = 0f;
+    private int stepsSinceLastPellet = 0;
+    private const int MaxStepsWithoutPellet = 140;
+
+    public override void Initialize()
+    {
+        pellets = levelGenerator.GenerateLevel();
+        Debug.Log($"Generated {pellets.Count} pellets.");
+        foreach (GameObject pellet in pellets)
+        {
+            Vector2Int gridPos = LevelGenerator.WorldToGrid(pellet.transform.localPosition);
+            pelletByGrid[gridPos] = pellet;
+        }
+
+        foreach (GameObject ghost in ghostObjects)
+        {
+            if (ghost != null) {
+                ghost.GetComponent<GhostBase>().ResetState();
+                ghosts.Add(ghost);
+            }
+        }
+    }
 
     public override void OnEpisodeBegin()
     {
-        // Reset le level
-        levelGenerator.ResetLevel();
+        ResetGhostsAndPellets();        
 
         nextAction = 0;
         currentMoveDir = Vector3.zero;
@@ -39,6 +64,10 @@ public class PacmanAgent : Agent
         transform.eulerAngles = Vector3.zero;
 
         isMoving = false;
+        score = 0;
+        multiplierScore = 1;
+        lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
+        stepsSinceLastPellet = 0;
     }
 
     void Start()
@@ -59,6 +88,23 @@ public class PacmanAgent : Agent
 
         discreteActions[0] = nextAction;
     }
+
+/*
+    public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+    {
+        if (!isReady) return;
+
+        Vector3[] dirs = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        for (int action = 0; action < dirs.Length; action++)
+        {
+            bool blocked = Physics2D.Raycast(transform.localPosition, dirs[action], 1f, wallLayer);
+            if (blocked)
+            {
+                actionMask.SetActionEnabled(0, action, false);
+            }
+        }
+    }
+*/
     
     public override void OnActionReceived(ActionBuffers actions)
     {
@@ -84,6 +130,25 @@ public class PacmanAgent : Agent
             if (!Physics2D.Raycast(transform.localPosition, currentMoveDir, 1f, wallLayer))
             {
                 targetPosition = transform.localPosition + currentMoveDir;
+                
+                /*float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
+                if (newNearestPelletDistance < lastNearestPelletDistance)
+                {
+                    AddReward(0.01f);
+                }
+                else if (newNearestPelletDistance > lastNearestPelletDistance)
+                {
+                    AddReward(-0.002f);
+                }*/
+
+                // lastNearestPelletDistance = newNearestPelletDistance;
+                stepsSinceLastPellet++;
+                if (stepsSinceLastPellet > MaxStepsWithoutPellet)
+                {
+                    AddReward(-1f);
+                    EndEpisode();
+                    return;
+                }
                 StartCoroutine(SmoothMove());
             }
             else
@@ -110,33 +175,20 @@ public class PacmanAgent : Agent
     {
         if (other.CompareTag("pacman_pellet") == true)
         {
-            AddReward(10f);
-            score += 10;
-            other.gameObject.SetActive(false);
-
-            bool allEaten = levelGenerator.GetAllPellets().TrueForAll(p => !p.activeSelf);
-            if (allEaten)
-            {
-                AddReward(500f);
-                EndEpisode();
-            }
+            HandlePelletCollected(other.gameObject, 10f, 10);
         } else if (other.CompareTag("pacman_power_pellet") == true)
         {
-            bool allEaten = levelGenerator.GetAllPellets().TrueForAll(p => !p.activeSelf);
-            if (allEaten)
+            if (HandlePelletCollected(other.gameObject, 50f, 50))
             {
-                AddReward(500f);
-                EndEpisode();
+                return;
             }
-            score += 50;
-            AddReward(50f);
-            other.gameObject.SetActive(false);
+
             isPowerUpActive = true;
             powerUpEndTime = Time.time + PowerUpDuration;
             CancelInvoke(nameof(DeactivatePowerUp));
             Invoke(nameof(DeactivatePowerUp), PowerUpDuration);
 
-            foreach (GameObject ghostObject in levelGenerator.GetSpawnedGhosts())
+            foreach (GameObject ghostObject in ghosts)
             {
                 if (ghostObject == null) continue;
 
@@ -153,12 +205,15 @@ public class PacmanAgent : Agent
                 }
             }
         }
-         else if (other.CompareTag("Clyde")==true || other.CompareTag("Blinky")==true || other.CompareTag("Inky")==true || other.CompareTag("Pinky")==true)
+         else if (other.CompareTag("Clyde") == true ||
+                other.CompareTag("Blinky") == true ||
+                other.CompareTag("Inky") == true ||
+                other.CompareTag("Pinky") == true)
         {
             if (isPowerUpActive)
             {
                 AddReward(200f);
-                score += multiplierScore*200;
+                score += multiplierScore * 200;
                 multiplierScore *= 2;
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
@@ -168,6 +223,26 @@ public class PacmanAgent : Agent
                 EndEpisode();
             }
         }
+    }
+
+    private bool HandlePelletCollected(GameObject pelletObject, float rewardValue, int scoreValue)
+    {
+        AddReward(rewardValue);
+        score += scoreValue;
+
+        stepsSinceLastPellet = 0;
+        pelletObject.SetActive(false);
+        lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
+
+        bool allEaten = pellets.TrueForAll(p => !p.activeSelf);
+        if (allEaten)
+        {
+            AddReward(500f);
+            EndEpisode();
+            return true;
+        }
+
+        return false;
     }
 
     private void DeactivatePowerUp()
@@ -186,10 +261,13 @@ public class PacmanAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
+        int mapHeight = LevelData.Map.GetLength(0);
+        int mapWidth = LevelData.Map.GetLength(1);
+
         // Grille de murs (28x31 = 868 observations)
-        for (int y = 0; y < LevelData.Map.GetLength(0); y++)
+        for (int y = 0; y < mapHeight; y++)
         {
-            for (int x = 0; x < LevelData.Map.GetLength(1); x++)
+            for (int x = 0; x < mapWidth; x++)
             {
                 sensor.AddObservation((TileType)LevelData.Map[y, x] == TileType.Wall ? 1f : 0f);
 
@@ -197,16 +275,21 @@ public class PacmanAgent : Agent
         }
 
         // Grille des pellets actifs
-        for (int y = 0; y < LevelData.Map.GetLength(0); y++)
+        for (int y = 0; y < mapHeight; y++)
         {
-            for (int x = 0; x < LevelData.Map.GetLength(1); x++)
+            for (int x = 0; x < mapWidth; x++)
             {
                 TileType cellValue = (TileType)LevelData.Map[y, x];
                 if (cellValue == TileType.Pellet || cellValue == TileType.PowerPellet)
                 {
-                    // Trouve le pellet correspondant dans la liste des pellets actifs
-                    GameObject pellet = levelGenerator.GetAllPellets().Find(p => p.transform.localPosition == LevelGenerator.GridToWorld(x, -y));
-                    sensor.AddObservation((pellet != null && pellet.activeSelf) ? GetPelletObs(cellValue) : 0f);
+                    if (pelletByGrid.TryGetValue(new Vector2Int(x, y), out GameObject pellet) && pellet != null && pellet.activeSelf)
+                    {
+                        sensor.AddObservation(GetPelletObs(cellValue));
+                    }
+                    else
+                    {
+                        sensor.AddObservation(0f);
+                    }
                 }
                 else
                 {
@@ -215,21 +298,21 @@ public class PacmanAgent : Agent
             }
         }
         
-        // Position et état des fantômes
-        // Si longueur == 0, on ajoute 4*3 observations à 0
-        if (levelGenerator.GetSpawnedGhosts().Count == 0)
+        // Position et état des fantômes (4 max, format fixe)
+        for (int i = 0; i < 4; i++)
         {
-            for (int i = 0; i < 4; i++)
+            if (i >= ghosts.Count || ghosts[i] == null)
             {
+                Debug.LogWarning($"Ghost index {i} is out of bounds or null. Total ghosts: {ghosts.Count}");
                 sensor.AddObservation(0f); // x
                 sensor.AddObservation(0f); // y
                 sensor.AddObservation(0f); // frightened
             }
-        } else {
-            foreach (GameObject ghost in levelGenerator.GetSpawnedGhosts())
+            else
             {
-                sensor.AddObservation(ghost.transform.localPosition.x / LevelData.Map.GetLength(1));
-                sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / LevelData.Map.GetLength(0));
+                GameObject ghost = ghosts[i];
+                sensor.AddObservation(ghost.transform.localPosition.x / mapWidth);
+                sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / mapHeight);
                 
                 GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
                 sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
@@ -237,10 +320,28 @@ public class PacmanAgent : Agent
         }
 
         // Position de Pacman normalisée
-        sensor.AddObservation(transform.localPosition.x / LevelData.Map.GetLength(1));
-        sensor.AddObservation(Mathf.Abs(transform.localPosition.y) / LevelData.Map.GetLength(0));
+        sensor.AddObservation(transform.localPosition.x / mapWidth);
+        sensor.AddObservation(Mathf.Abs(transform.localPosition.y) / mapHeight);
 
         sensor.AddObservation(GetPowerUpObservation());
+    }
+
+    private float GetNearestPelletDistance(Vector3 fromPosition)
+    {
+        float minDistance = float.MaxValue;
+
+        foreach (GameObject pellet in pellets)
+        {
+            if (pellet == null || !pellet.activeSelf) continue;
+
+            float distance = Vector2.Distance(fromPosition, pellet.transform.localPosition);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+            }
+        }
+
+        return minDistance == float.MaxValue ? 0f : minDistance;
     }
 
     private float GetPowerUpObservation()
@@ -254,6 +355,28 @@ public class PacmanAgent : Agent
         else
         {
             return 0f;
+        }
+    }
+
+    private void ResetGhostsAndPellets()
+    {
+        // Reset pellets
+        foreach (GameObject pellet in pellets)
+        {
+            if (pellet != null) pellet.SetActive(true);
+        }
+
+        // Reset ghosts
+        for (int i = 0; i < ghosts.Count; i++)
+        {
+            if (ghosts[i] != null)
+            {
+                GhostBase ghostBase = ghosts[i].GetComponent<GhostBase>();
+                if (ghostBase != null)
+                {
+                    ghostBase.ResetState(); 
+                }
+            }
         }
     }
 }

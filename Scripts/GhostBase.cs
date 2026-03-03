@@ -19,12 +19,6 @@ public class GhostBase : MonoBehaviour
         this.frightened = GetComponent<GhostFrightened>();
     }    
 
-    // Update is called once per frame
-    void Start()
-    {
-        ResetState();
-    }
-
     public void ResetState()
     {
         gameObject.SetActive(true);

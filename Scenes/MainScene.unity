@@ -270,8 +270,6 @@ MonoBehaviour:
   wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
   doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
   pelletContainer: {fileID: 0}
-  pacmanObject: {fileID: 0}
-  ghostObjects: []
   pelletPrefab: {fileID: 7409023658524369809, guid: 7d15df238dba71840b97ad544681bb8f,
     type: 3}
   powerPelletPrefab: {fileID: 5593661107182969094, guid: 0315ed9d39fab024f9a514943ec6939d,
@@ -385,12 +383,6 @@ MonoBehaviour:
   wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
   doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
   pelletContainer: {fileID: 32261631}
-  pacmanObject: {fileID: 8313447529644925690}
-  ghostObjects:
-  - {fileID: 6834668022667514553}
-  - {fileID: 8930928276714237678}
-  - {fileID: 5923877523202773617}
-  - {fileID: 547784953803947933}
   pelletPrefab: {fileID: 7409023658524369809, guid: 7d15df238dba71840b97ad544681bb8f,
     type: 3}
   powerPelletPrefab: {fileID: 5593661107182969094, guid: 0315ed9d39fab024f9a514943ec6939d,
@@ -539,7 +531,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1622239536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -553,8 +545,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 4
-  numberOfGamesY: 4
+  numberOfGamesX: 6
+  numberOfGamesY: 6
   spacing: 2
   gameXSize: 28
   gameYSize: 31
@@ -2528,6 +2520,12 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
+  ghostObjects:
+  - {fileID: 6834668022667514553}
+  - {fileID: 547784953803947933}
+  - {fileID: 5923877523202773617}
+  - {fileID: 8930928276714237678}
+  score: 0
 --- !u!114 &6481047165064966109
 MonoBehaviour:
   m_ObjectHideFlags: 0

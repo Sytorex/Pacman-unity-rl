@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 public class PacmanAgent : Agent
 {
-    public float moveSpeed = 5f;
+    public float moveSpeed = 8f;
     public LevelGenerator levelGenerator;
     public LayerMask wallLayer;
     public GameObject[] ghostObjects; // Blinky, Pinky, Inky, Clyde
@@ -24,9 +24,9 @@ public class PacmanAgent : Agent
     private List<GameObject> pellets = new List<GameObject>();
     private List<GameObject> ghosts = new List<GameObject>();
     private readonly Dictionary<Vector2Int, GameObject> pelletByGrid = new Dictionary<Vector2Int, GameObject>();
-    private float lastNearestPelletDistance = 0f;
+    // private float lastNearestPelletDistance = 0f;
     private int stepsSinceLastPellet = 0;
-    private const int MaxStepsWithoutPellet = 1400;
+    private const int MaxStepsWithoutPellet = 1000;
     private const int VisionRadius = 5; // 11x11 grid (2*5+1)
     private const int VisionSize = VisionRadius * 2 + 1;
 
@@ -51,7 +51,7 @@ public class PacmanAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        ResetGhostsAndPellets();        
+        
 
         nextAction = 0;
         currentMoveDir = Vector3.zero;
@@ -62,13 +62,14 @@ public class PacmanAgent : Agent
         Vector2Int startPos = LevelData.PacmanStartPosition;
         transform.localPosition = LevelGenerator.GridToWorld(startPos.x, -startPos.y, LevelGenerator.PacmanZLayer);
         targetPosition = transform.localPosition;
-
         transform.eulerAngles = Vector3.zero;
+
+        ResetGhostsAndPellets();
 
         isMoving = false;
         score = 0;
         multiplierScore = 1;
-        lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
+        // lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
         stepsSinceLastPellet = 0;
     }
 
@@ -133,7 +134,8 @@ public class PacmanAgent : Agent
             {
                 targetPosition = transform.localPosition + currentMoveDir;
                 
-                /*float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
+                /*
+                float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
                 if (newNearestPelletDistance < lastNearestPelletDistance)
                 {
                     AddReward(0.01f);
@@ -231,7 +233,7 @@ public class PacmanAgent : Agent
 
         stepsSinceLastPellet = 0;
         pelletObject.SetActive(false);
-        lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
+        // lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
 
         bool allEaten = pellets.TrueForAll(p => !p.activeSelf);
         if (allEaten)
@@ -333,6 +335,10 @@ public class PacmanAgent : Agent
 
         // === Power-up remaining time (1 obs) ===
         sensor.AddObservation(GetPowerUpObservation());
+
+        // === Distance to nearest pellet (1 obs) ===
+        float nearestPelletDistance = GetNearestPelletDistance(transform.localPosition) / (mapWidth + mapHeight); // Normalize by max possible distance
+        sensor.AddObservation(nearestPelletDistance);
     }
 
     private float GetNearestPelletDistance(Vector3 fromPosition)

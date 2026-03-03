@@ -111,8 +111,8 @@ public class GhostFrightened : GhostBehavior
         // On force le retour à la maison avec une durée fixe
         //if(this.gameObject.name != "Blinky" && this.gameObject.name != "Pinky" && this.gameObject.name != "Inky" && this.gameObject.name != "Clyde") 
         
-            //detroy ghost
-        Destroy(this.gameObject);
+        // Set active to false to stop all movement and interactions, but keep the object in the scene so it can be re-enabled when leaving home
+        this.gameObject.SetActive(false);
         
 
         // On désactive Frightened à la fin pour que le fantôme 

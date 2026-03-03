@@ -492,11 +492,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 3
-  numberOfGamesY: 3
+  numberOfGamesX: 7
+  numberOfGamesY: 7
   spacing: 2
-  gameXSize: 28
-  gameYSize: 31
+  gameXSize: 20
+  gameYSize: 15
 --- !u!4 &1622239537
 Transform:
   m_ObjectHideFlags: 0
@@ -1499,7 +1499,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 495028590046920520}
-  DefDuration: 16
+  DefDuration: 6
   speed: 4
 --- !u!1 &2736432641925111370
 GameObject:

@@ -29,6 +29,7 @@ public class PacmanAgent : Agent
     private const int MaxStepsWithoutPellet = 1000;
     private const int VisionRadius = 2; // 11x11 grid (2*2+1)
     private const int VisionSize = VisionRadius * 2 + 1;
+    private int CountStep = 0;
 
     public override void Initialize()
     {
@@ -52,7 +53,7 @@ public class PacmanAgent : Agent
     public override void OnEpisodeBegin()
     {
         
-
+        CountStep=0;
         nextAction = 0;
         currentMoveDir = Vector3.zero;
         isPowerUpActive = false;
@@ -113,6 +114,7 @@ public class PacmanAgent : Agent
     {
         if (isMoving || !isReady) return;
 
+        CountStep++;
         int action = actions.DiscreteActions[0];
         Vector3 wantedDir = Vector3.zero;
         float rotation = 0f;
@@ -238,7 +240,8 @@ public class PacmanAgent : Agent
         bool allEaten = pellets.TrueForAll(p => !p.activeSelf);
         if (allEaten)
         {
-            AddReward(500f);
+            Debug.Log($"All pellets eaten in {CountStep} steps!");
+            AddReward(1000f - CountStep * 0.001f); 
             EndEpisode();
             return true;
         }

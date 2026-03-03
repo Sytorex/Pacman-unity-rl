@@ -26,7 +26,7 @@ public class PacmanAgent : Agent
     private readonly Dictionary<Vector2Int, GameObject> pelletByGrid = new Dictionary<Vector2Int, GameObject>();
     private float lastNearestPelletDistance = 0f;
     private int stepsSinceLastPellet = 0;
-    private const int MaxStepsWithoutPellet = 140;
+    private const int MaxStepsWithoutPellet = 1400;
     private const int VisionRadius = 5; // 11x11 grid (2*5+1)
     private const int VisionSize = VisionRadius * 2 + 1;
 
@@ -207,10 +207,7 @@ public class PacmanAgent : Agent
                 }
             }
         }
-         else if (other.CompareTag("Clyde") == true ||
-                other.CompareTag("Blinky") == true ||
-                other.CompareTag("Inky") == true ||
-                other.CompareTag("Pinky") == true)
+         else if (other.CompareTag("pacman_ghost") == true)
         {
             if (isPowerUpActive)
             {

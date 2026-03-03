@@ -43,7 +43,7 @@ public class GhostScatter : GhostBehavior
 
     void ChooseCorner()
     {
-        if (LevelData.GhostScatterTargets.TryGetValue(this.tag, out Vector3[] configuredTargets))
+        if (LevelData.GhostScatterTargets.TryGetValue(this.gameObject.name, out Vector3[] configuredTargets))
         {
             scatterTargetList = configuredTargets;
             return;

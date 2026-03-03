@@ -8,21 +8,22 @@ public class MultipleGames : MonoBehaviour
     public float spacing = 2f;
     public float gameXSize = 28f; // Largeur de la grille de jeu
     public float gameYSize = 31f; // Hauteur de la grille de jeu
-    private GameObject[] pacmanAgents;
+    private GameObject[] games;
 
     void Start()
     {
-        pacmanAgents = new GameObject[numberOfGamesX * numberOfGamesY];
+        gamePrefab.SetActive(false); // Désactive le prefab original
+
+        games = new GameObject[numberOfGamesX * numberOfGamesY];
         for (int i = 0; i < numberOfGamesX * numberOfGamesY; i++)
         {
             int x = i % numberOfGamesX;
             int y = i / numberOfGamesX;
             Vector3 position = new Vector3(x * (gameXSize + spacing), y * (gameYSize + spacing), 0);
-            pacmanAgents[i] = Instantiate(gamePrefab, position, Quaternion.identity);
-            pacmanAgents[i].name = "Game_" + (i + 1);
+            games[i] = Instantiate(gamePrefab, position, Quaternion.identity);
+            games[i].name = "Game_" + (i + 1);
+            games[i].SetActive(true); // Active le jeu pour qu'il puisse être vu et joué
         }
-
-        gamePrefab.SetActive(false); // Désactive le prefab original
 
         // Centrer la caméra
         float totalWidth = numberOfGamesX * (gameXSize + spacing) - spacing;

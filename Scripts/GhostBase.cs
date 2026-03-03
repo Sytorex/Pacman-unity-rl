@@ -44,7 +44,7 @@ public class GhostBase : MonoBehaviour
     }
 
     public void ResetPosition() { 
-        Vector2Int pos = LevelData.GhostHomePositions[this.tag];
+        Vector2Int pos = LevelData.GhostHomePositions[this.gameObject.name];
         transform.localPosition = LevelGenerator.GridToWorld(pos.x, -pos.y, LevelGenerator.GhostZLayer);
     }
 }

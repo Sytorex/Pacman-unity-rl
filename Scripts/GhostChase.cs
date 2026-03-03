@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GhostChase : GhostBehavior
 {
-    string ghostTag;
+    string ghostName;
     public Transform pacmanTransform;
     public Transform blinkyTransform;
 
@@ -15,8 +15,8 @@ public class GhostChase : GhostBehavior
 
     private void OnEnable()
     {
-        // set the ghost's chase behavior based on its tag
-        ghostTag = this.tag;
+        // set the ghost's chase behavior based on its name (title of gameobject)
+        ghostName = this.gameObject.name;
 
         targetPosition = LevelGenerator.GridToWorld(
             transform.localPosition.x,
@@ -31,13 +31,13 @@ public class GhostChase : GhostBehavior
     {
         if (!isMoving)
         {
-            if (ghostTag == "Blinky")
+            if (ghostName == "Blinky")
                 ChooseNextMoveBlinky();
-            else if (ghostTag == "Pinky")
+            else if (ghostName == "Pinky")
                 ChooseNextMovePinky();
-            else if (ghostTag == "Inky")
+            else if (ghostName == "Inky")
                 ChooseNextMoveInky();
-            else if (ghostTag == "Clyde")
+            else if (ghostName == "Clyde")
                 ChooseNextMoveClyde();
         }
         else

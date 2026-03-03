@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8254128878782083324}
   - component: {fileID: 5882426550104142217}
-  - component: {fileID: -4763195318552559609}
+  - component: {fileID: -2839740876232791643}
   m_Layer: 0
   m_Name: Pellet
   m_TagString: pacman_pellet
@@ -89,7 +89,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!61 &-4763195318552559609
+--- !u!61 &-2839740876232791643
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,5 +133,5 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 3, y: 3}
   m_EdgeRadius: 0

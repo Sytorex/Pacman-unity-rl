@@ -18,7 +18,7 @@ public class LevelGenerator : MonoBehaviour
 
     public const float DefaultZLayer = 0f;
     public const float GhostZLayer = -0.1f;
-    public const float PacmanZLayer = -0.5f;
+    public const float PacmanZLayer = -0.2f;
 
     public static Vector3 GridToWorld(float x, float y, float z = DefaultZLayer)
     {

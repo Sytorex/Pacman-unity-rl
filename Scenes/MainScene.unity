@@ -160,7 +160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 482201032}
   - component: {fileID: 482201033}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PacmanSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -237,58 +237,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!1 &746661467
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 746661469}
-  - component: {fileID: 746661468}
-  m_Layer: 0
-  m_Name: LevelManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &746661468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746661467}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 33cff92d043ebfe4594608ee3d3c72e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tilemap: {fileID: 1908745982}
-  wallTile: {fileID: 11400000, guid: e244cfc3f03882140b2dbec117b89fed, type: 2}
-  doorTile: {fileID: 11400000, guid: f0fc4ae38311fad45891fb0e21addfc5, type: 2}
-  pelletContainer: {fileID: 0}
-  pelletPrefab: {fileID: 7409023658524369809, guid: 7d15df238dba71840b97ad544681bb8f,
-    type: 3}
-  powerPelletPrefab: {fileID: 5593661107182969094, guid: 0315ed9d39fab024f9a514943ec6939d,
-    type: 3}
---- !u!4 &746661469
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 746661467}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 989213907}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &989213906
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,7 +249,7 @@ GameObject:
   - component: {fileID: 989213908}
   m_Layer: 0
   m_Name: Grid
-  m_TagString: Untagged
+  m_TagString: pacman_wall
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -320,7 +268,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1908745984}
-  - {fileID: 746661469}
   m_Father: {fileID: 1746154768}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!156049354 &989213908
@@ -998,7 +945,7 @@ GameObject:
   - component: {fileID: 3026299865957541965}
   m_Layer: 6
   m_Name: Pinky
-  m_TagString: Pinky
+  m_TagString: pacman_ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1579,7 +1526,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8313447529644925690}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 13.5, y: -23.5, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
@@ -2208,7 +2155,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 1
+  m_Radius: 0.8
 --- !u!212 &5177568985000675699
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2334,7 +2281,7 @@ GameObject:
   - component: {fileID: 8957759759118992801}
   m_Layer: 6
   m_Name: Inky
-  m_TagString: Inky
+  m_TagString: pacman_ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2607,7 +2554,7 @@ GameObject:
   - component: {fileID: 8123388066530198889}
   m_Layer: 6
   m_Name: Blinky
-  m_TagString: Blinky
+  m_TagString: pacman_ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2899,13 +2846,44 @@ GameObject:
   - component: {fileID: 6031972203951869705}
   - component: {fileID: 6431582764971046050}
   - component: {fileID: 6795971050710184767}
-  m_Layer: 0
+  - component: {fileID: 8313447529644925692}
+  m_Layer: 9
   m_Name: PacmanAgent
   m_TagString: pacman_player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &8313447529644925692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8313447529644925690}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67c7e722ba14acd9153bb4488bff6e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SensorName: RayPerceptionSensor
+  m_DetectableTags:
+  - pacman_wall
+  - pacman_pellet
+  - pacman_power_pellet
+  - pacman_ghost
+  m_RaysPerDirection: 6
+  m_MaxRayDegrees: 180
+  m_SphereCastRadius: 0.1
+  m_RayLength: 20
+  m_RayLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294966779
+  m_ObservationStacks: 1
+  m_AlternatingRayOrder: 1
+  m_UseBatchedRaycasts: 0
+  rayHitColor: {r: 1, g: 0, b: 0, a: 1}
+  rayMissColor: {r: 0.27440238, g: 1, b: 0, a: 1}
 --- !u!58 &8566274863820202733
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -3140,7 +3118,7 @@ GameObject:
   - component: {fileID: 6166707454428363070}
   m_Layer: 6
   m_Name: Clyde
-  m_TagString: Clyde
+  m_TagString: pacman_ghost
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

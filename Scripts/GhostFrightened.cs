@@ -102,7 +102,6 @@ public class GhostFrightened : GhostBehavior
     public void Eaten()
     {
         eaten = true;
-        // ... (tes changements de sprites)
 
 
         // On coupe tout
@@ -110,7 +109,11 @@ public class GhostFrightened : GhostBehavior
         this.ghost.scatter.Disable();
 
         // On force le retour à la maison avec une durée fixe
-        this.ghost.home.Enable(8f);
+        //if(this.gameObject.name != "Blinky" && this.gameObject.name != "Pinky" && this.gameObject.name != "Inky" && this.gameObject.name != "Clyde") 
+        
+            //detroy ghost
+        Destroy(this.gameObject);
+        
 
         // On désactive Frightened à la fin pour que le fantôme 
         // reprenne son cycle normal APRES être sorti du home

@@ -27,6 +27,8 @@ public class PacmanAgent : Agent
     private float lastNearestPelletDistance = 0f;
     private int stepsSinceLastPellet = 0;
     private const int MaxStepsWithoutPellet = 140;
+    private const int VisionRadius = 5; // 11x11 grid (2*5+1)
+    private const int VisionSize = VisionRadius * 2 + 1;
 
     public override void Initialize()
     {
@@ -34,7 +36,7 @@ public class PacmanAgent : Agent
         Debug.Log($"Generated {pellets.Count} pellets.");
         foreach (GameObject pellet in pellets)
         {
-            Vector2Int gridPos = LevelGenerator.WorldToGrid(pellet.transform.localPosition);
+            Vector2Int gridPos = WorldToMapCoords(pellet.transform.localPosition);
             pelletByGrid[gridPos] = pellet;
         }
 
@@ -252,77 +254,87 @@ public class PacmanAgent : Agent
         powerUpEndTime = 0f;
     }
 
-    private float GetPelletObs(TileType cellValue)
+    /// <summary>
+    /// Converts a world position to map grid coordinates (x = column, y = row).
+    /// </summary>
+    private static Vector2Int WorldToMapCoords(Vector3 worldPos)
     {
-        if (cellValue == TileType.Pellet) return 0.5f;
-        else if (cellValue == TileType.PowerPellet) return 1f;
-        else return 0f;
+        return new Vector2Int(Mathf.FloorToInt(worldPos.x), -Mathf.FloorToInt(worldPos.y));
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        int mapHeight = LevelData.Map.GetLength(0);
-        int mapWidth = LevelData.Map.GetLength(1);
+        int mapHeight = LevelData.MapHeight;
+        int mapWidth = LevelData.MapWidth;
 
-        // Grille de murs (28x31 = 868 observations)
-        for (int y = 0; y < mapHeight; y++)
+        // Pacman position in map coordinates
+        Vector2Int pacMap = WorldToMapCoords(transform.localPosition);
+
+        // === Local vision grid (11x11 = 121 observations) ===
+        // Values: 0 = empty/path, 0.33 = wall, 0.66 = pellet, 1.0 = power pellet
+        for (int dy = -VisionRadius; dy <= VisionRadius; dy++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int dx = -VisionRadius; dx <= VisionRadius; dx++)
             {
-                sensor.AddObservation((TileType)LevelData.Map[y, x] == TileType.Wall ? 1f : 0f);
+                int mx = pacMap.x + dx;
+                int my = pacMap.y + dy;
 
-            }
-        }
-
-        // Grille des pellets actifs
-        for (int y = 0; y < mapHeight; y++)
-        {
-            for (int x = 0; x < mapWidth; x++)
-            {
-                TileType cellValue = (TileType)LevelData.Map[y, x];
-                if (cellValue == TileType.Pellet || cellValue == TileType.PowerPellet)
+                if (mx < 0 || mx >= mapWidth || my < 0 || my >= mapHeight)
                 {
-                    if (pelletByGrid.TryGetValue(new Vector2Int(x, y), out GameObject pellet) && pellet != null && pellet.activeSelf)
-                    {
-                        sensor.AddObservation(GetPelletObs(cellValue));
-                    }
-                    else
-                    {
-                        sensor.AddObservation(0f);
-                    }
+                    sensor.AddObservation(0.33f); // Out of bounds → wall
                 }
                 else
                 {
-                    sensor.AddObservation(0f);
+                    TileType cell = (TileType)LevelData.Map[my, mx];
+
+                    if (cell == TileType.Wall)
+                    {
+                        sensor.AddObservation(0.33f);
+                    }
+                    else if (cell == TileType.Pellet || cell == TileType.PowerPellet)
+                    {
+                        if (pelletByGrid.TryGetValue(new Vector2Int(mx, my), out GameObject pellet)
+                            && pellet != null && pellet.activeSelf)
+                        {
+                            sensor.AddObservation(cell == TileType.PowerPellet ? 1f : 0.66f);
+                        }
+                        else
+                        {
+                            sensor.AddObservation(0f); // Eaten
+                        }
+                    }
+                    else
+                    {
+                        sensor.AddObservation(0f); // Empty / door
+                    }
                 }
             }
         }
-        
-        // Position et état des fantômes (4 max, format fixe)
+
+        // === Ghost observations: relative position + frightened (4 × 3 = 12 obs) ===
         for (int i = 0; i < 4; i++)
         {
             if (i >= ghosts.Count || ghosts[i] == null)
             {
-                Debug.LogWarning($"Ghost index {i} is out of bounds or null. Total ghosts: {ghosts.Count}");
-                sensor.AddObservation(0f); // x
-                sensor.AddObservation(0f); // y
+                Debug.LogWarning($"Ghost index {i} is out of bounds or null.");
+                sensor.AddObservation(0f); // relative x
+                sensor.AddObservation(0f); // relative y
                 sensor.AddObservation(0f); // frightened
             }
             else
             {
                 GameObject ghost = ghosts[i];
-                sensor.AddObservation(ghost.transform.localPosition.x / mapWidth);
-                sensor.AddObservation(Mathf.Abs(ghost.transform.localPosition.y) / mapHeight);
-                
+                float relX = (ghost.transform.localPosition.x - transform.localPosition.x) / mapWidth;
+                float relY = (ghost.transform.localPosition.y - transform.localPosition.y) / mapHeight;
+                sensor.AddObservation(relX);
+                sensor.AddObservation(relY);
+
                 GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
                 sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
             }
         }
 
-        // Position de Pacman normalisée
-        sensor.AddObservation(transform.localPosition.x / mapWidth);
-        sensor.AddObservation(Mathf.Abs(transform.localPosition.y) / mapHeight);
-
+        // === Power-up remaining time (1 obs) ===
         sensor.AddObservation(GetPowerUpObservation());
     }
 

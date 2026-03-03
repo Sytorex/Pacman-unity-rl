@@ -21,7 +21,10 @@ public class GhostBase : MonoBehaviour
 
     public void ResetState()
     {
-        gameObject.SetActive(true);
+        if (this.gameObject.name == "Blinky" || this.gameObject.name == "Clyde")
+        {
+            gameObject.SetActive(true);
+        }
 
         home.enabled = false;
         scatter.enabled = false;

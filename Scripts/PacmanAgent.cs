@@ -27,7 +27,7 @@ public class PacmanAgent : Agent
     // private float lastNearestPelletDistance = 0f;
     private int stepsSinceLastPellet = 0;
     private const int MaxStepsWithoutPellet = 1000;
-    private const int VisionRadius = 5; // 11x11 grid (2*5+1)
+    private const int VisionRadius = 2; // 11x11 grid (2*2+1)
     private const int VisionSize = VisionRadius * 2 + 1;
 
     public override void Initialize()
@@ -213,7 +213,7 @@ public class PacmanAgent : Agent
         {
             if (isPowerUpActive)
             {
-                AddReward(200f);
+                AddReward(150f);
                 score += multiplierScore * 200;
                 multiplierScore *= 2;
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
@@ -265,6 +265,111 @@ public class PacmanAgent : Agent
     {
         int mapHeight = LevelData.MapHeight;
         int mapWidth = LevelData.MapWidth;
+        Vector2Int pacMap = WorldToMapCoords(transform.localPosition);
+
+        // 1. VISION LOCALE RÉDUITE (5x5 = 25 obs)
+        // Plus léger, suffisant pour ne pas se cogner et manger autour de soi
+        int localRadius = 2; 
+        for (int dy = -localRadius; dy <= localRadius; dy++)
+        {
+            for (int dx = -localRadius; dx <= localRadius; dx++)
+            {
+                int mx = pacMap.x + dx;
+                int my = pacMap.y + dy;
+
+                if (mx < 0 || mx >= mapWidth || my < 0 || my >= mapHeight)
+                {
+                    sensor.AddObservation(0.33f); // Mur (hors limite)
+                }
+                else
+                {
+                    TileType cell = (TileType)LevelData.Map[my, mx];
+                    if (cell == TileType.Wall) sensor.AddObservation(0.33f);
+                    else if (cell == TileType.Pellet && IsPelletActive(mx, my)) sensor.AddObservation(0.66f);
+                    else if (cell == TileType.PowerPellet && IsPelletActive(mx, my)) sensor.AddObservation(1f);
+                    else sensor.AddObservation(0f); // Vide
+                }
+            }
+        }
+
+        // 2. FANTÔMES (Statiques : 4 x 3 = 12 obs)
+        // Position relative normalisée + état de peur
+        for (int i = 0; i < 4; i++)
+        {
+            if (i < ghosts.Count && ghosts[i] != null)
+            {
+                GameObject ghost = ghosts[i];
+                // Différence de position directe (non normalisée par la grille pour plus de précision)
+                Vector3 relativePos = ghost.transform.localPosition - transform.localPosition;
+                sensor.AddObservation(relativePos.x / mapWidth);
+                sensor.AddObservation(relativePos.y / mapHeight);
+
+                GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
+                sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
+            }
+            else
+            {
+                Debug.LogWarning($"Ghost index {i} is out of bounds or null.");
+                sensor.AddObservation(0f);
+                sensor.AddObservation(0f);
+                sensor.AddObservation(0f);
+            }
+        }
+
+        // 3. DIRECTION ACTUELLE (2 obs au lieu de 1)
+        // On donne le vecteur de direction direct (x, y) pour éviter le biais scalaire
+        sensor.AddObservation(currentMoveDir.x); 
+        sensor.AddObservation(currentMoveDir.y);
+
+        // 4. INFOS GLOBALES (2 obs)
+        // État du Power-up
+        sensor.AddObservation(GetPowerUpObservation());
+
+        // Distance au pellet le plus proche (très important pour le guidage)
+        float nearestDist = GetNearestPelletDistance(transform.localPosition) / (mapWidth + mapHeight);
+        sensor.AddObservation(Mathf.Clamp01(nearestDist));
+        
+        // BONUS : Direction vers le pellet le plus proche (Optionnel mais très puissant)
+        Vector2 dirToPellet = GetDirectionToNearestPellet();
+        sensor.AddObservation(dirToPellet.x);
+        sensor.AddObservation(dirToPellet.y);
+    }
+
+    private bool IsPelletActive(int mx, int my)
+    {
+        if (pelletByGrid.TryGetValue(new Vector2Int(mx, my), out GameObject pellet))
+        {
+            return pellet != null && pellet.activeSelf;
+        }
+        return false;
+    }
+
+    private Vector2 GetDirectionToNearestPellet()
+    {
+        Vector2 nearestDir = Vector2.zero;
+        float minDistance = float.MaxValue;
+
+        foreach (GameObject pellet in pellets)
+        {
+            if (pellet == null || !pellet.activeSelf) continue;
+
+            Vector2 dir = pellet.transform.localPosition - transform.localPosition;
+            float distance = dir.magnitude;
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearestDir = dir.normalized; // Direction normalisée vers le pellet
+            }
+        }
+
+        return nearestDir;
+    }
+
+    /*
+    public override void CollectObservations(VectorSensor sensor)
+    {
+        int mapHeight = LevelData.MapHeight;
+        int mapWidth = LevelData.MapWidth;
 
         // Pacman position in map coordinates
         Vector2Int pacMap = WorldToMapCoords(transform.localPosition);
@@ -308,7 +413,7 @@ public class PacmanAgent : Agent
                     }
                 }
             }
-        }
+        }   
 
         // === Ghost observations: relative position + frightened (4 × 3 = 12 obs) ===
         for (int i = 0; i < 4; i++)
@@ -339,7 +444,16 @@ public class PacmanAgent : Agent
         // === Distance to nearest pellet (1 obs) ===
         float nearestPelletDistance = GetNearestPelletDistance(transform.localPosition) / (mapWidth + mapHeight); // Normalize by max possible distance
         sensor.AddObservation(nearestPelletDistance);
+
+        // Pacman current movement direction (1 obs) - encoded as 0=up, 1=down, 2=left, 3=right
+        int moveDir = 0;
+        if (currentMoveDir == Vector3.up) moveDir = 0;
+        else if (currentMoveDir == Vector3.down) moveDir = 1;
+        else if (currentMoveDir == Vector3.left) moveDir = 2;
+        else if (currentMoveDir == Vector3.right) moveDir = 3;
+        sensor.AddObservation(moveDir / 3f); // Normalize to [0,1]
     }
+    */
 
     private float GetNearestPelletDistance(Vector3 fromPosition)
     {

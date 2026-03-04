@@ -223,7 +223,7 @@ public class PacmanAgent : Agent
             }
             else
             {
-                AddReward(-100f);
+                AddReward(-200f);
                 EndEpisode();
             }
         }
@@ -279,18 +279,30 @@ public override void CollectObservations(VectorSensor sensor)
 
         // 2. LA GRILLE ENTIÈRE (11 * 21 = 231 obs)
         // On parcourt la grille de [0,0] à [mapHeight, mapWidth]
+        // for (int y = 0; y < mapHeight; y++)
+        // {
+        //     for (int x = 0; x < mapWidth; x++)
+        //     {
+        //         TileType cell = (TileType)LevelData.Map[y, x];
+        //         if (cell == TileType.Wall) 
+        //         {
+        //             sensor.AddObservation(0.33f);
+        //         }
+        //         else 
+        //         {
+        //             sensor.AddObservation(0f); // Vide ou déjà mangé
+        //         }
+        //     }
+        // }
+        // 3. POSITION DES PELLETS DISSOCIés DES MURS
         for (int y = 0; y < mapHeight; y++)
         {
             for (int x = 0; x < mapWidth; x++)
             {
                 TileType cell = (TileType)LevelData.Map[y, x];
-                if (cell == TileType.Wall) 
+                if (cell == TileType.Pellet && IsPelletActive(x, y)) 
                 {
-                    sensor.AddObservation(0.33f);
-                }
-                else if (cell == TileType.Pellet && IsPelletActive(x, y)) 
-                {
-                    sensor.AddObservation(0.66f);
+                    sensor.AddObservation(0.5f);
                 }
                 else if (cell == TileType.PowerPellet && IsPelletActive(x, y)) 
                 {
@@ -302,6 +314,7 @@ public override void CollectObservations(VectorSensor sensor)
                 }
             }
         }
+
 
         // 3. FANTÔMES (Position absolue normalisée + état de peur : 4 x 3 = 12 obs)
         for (int i = 0; i < 4; i++)

@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class LevelDataHard
+public class LevelDataMedium
 {
     public static int MapWidth => Map.GetLength(1);
     public static int MapHeight => Map.GetLength(0);

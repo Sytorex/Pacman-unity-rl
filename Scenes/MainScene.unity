@@ -478,7 +478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1622239536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,8 +492,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 4
-  numberOfGamesY: 4
+  numberOfGamesX: 3
+  numberOfGamesY: 3
   spacing: 2
   gameXSize: 20
   gameYSize: 15
@@ -2462,7 +2462,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  moveSpeed: 2
+  moveSpeed: 8
   levelGenerator: {fileID: 1346287886}
   wallLayer:
     serializedVersion: 2

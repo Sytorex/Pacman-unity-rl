@@ -24,11 +24,13 @@ public class PacmanAgent : Agent
     private List<GameObject> pellets = new List<GameObject>();
     private List<GameObject> ghosts = new List<GameObject>();
     private readonly Dictionary<Vector2Int, GameObject> pelletByGrid = new Dictionary<Vector2Int, GameObject>();
-    // private float lastNearestPelletDistance = 0f;
+    //private float lastNearestPelletDistance = 0f;
     private int stepsSinceLastPellet = 0;
-    private const int MaxStepsWithoutPellet = 1000;
-    private const int VisionRadius = 2; // 11x11 grid (2*2+1)
-    private const int VisionSize = VisionRadius * 2 + 1;
+    private const int MaxStepsWithoutPellet = 150;
+    private const int maxStepCount = 1500;
+    
+    // private const int VisionRadius = 2; // 11x11 grid (2*2+1)
+    // private const int VisionSize = VisionRadius * 2 + 1;
     private int CountStep = 0;
 
     public override void Initialize()
@@ -69,7 +71,7 @@ public class PacmanAgent : Agent
         isMoving = false;
         score = 0;
         multiplierScore = 1;
-        // lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
+        //lastNearestPelletDistance = GetNearestPelletDistance(transform.localPosition);
         stepsSinceLastPellet = 0;
     }
 
@@ -108,10 +110,51 @@ public class PacmanAgent : Agent
         }
     }
 */
+
+   // ╔══════════════════════════════════════════════════════════════╗
+    // ║  MODIF #2 — WriteDiscreteActionMask RÉACTIVÉ                ║
+    // ║  Empêche l'agent de choisir une direction bloquée par un    ║
+    // ║  mur. Réduit l'exploration inutile et accélère              ║
+    // ║  l'apprentissage dès les premières itérations.              ║
+    // ╚══════════════════════════════════════════════════════════════╝
+    public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+    {
+        if (!isReady) return;
+
+        Vector3[] dirs = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
+        for (int action = 0; action < dirs.Length; action++)
+        {
+            bool blocked = Physics2D.Raycast(transform.localPosition, dirs[action], 1f, wallLayer);
+            if (blocked)
+            {
+                actionMask.SetActionEnabled(0, action, false);
+            }
+        }
+    }
     
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (isMoving || !isReady) return;
+
+        stepsSinceLastPellet++;
+        if (stepsSinceLastPellet > MaxStepsWithoutPellet)
+        {
+            AddReward(-5f);
+            EndEpisode();
+            return;
+        }
+        if (CountStep >= maxStepCount) // proche du Max Step = 3000
+        {
+            AddReward(-5f);
+            EndEpisode();
+            return;
+        }
+
+         Vector2Int currentGrid = WorldToMapCoords(transform.localPosition);
+        if (!IsPelletActive(currentGrid.x, currentGrid.y))
+        {
+            AddReward(-0.002f); // case vide, pousse à explorer ailleurs
+        }
 
         CountStep++;
         int action = actions.DiscreteActions[0];
@@ -122,11 +165,13 @@ public class PacmanAgent : Agent
         else if (action == 2) { wantedDir = Vector3.left; rotation = 180f; }
         else if (action == 3) { wantedDir = Vector3.right; rotation = 0f; }
 
-        
+        AddReward(-0.002f);
+
+
         if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.localPosition, wantedDir, 1f, wallLayer))
         {
             currentMoveDir = wantedDir;
-            float angle = Mathf.Atan2(wantedDir.y, wantedDir.x) * Mathf.Rad2Deg;
+            // float angle = Mathf.Atan2(wantedDir.y, wantedDir.x) * Mathf.Rad2Deg;
             transform.eulerAngles = new Vector3(0, 0, rotation);
         }
 
@@ -136,34 +181,45 @@ public class PacmanAgent : Agent
             {
                 targetPosition = transform.localPosition + currentMoveDir;
                 isMoving = true;
-                /*
-                float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
+
+                 
+                /*float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
                 if (newNearestPelletDistance < lastNearestPelletDistance)
                 {
-                    AddReward(0.01f);
+                    AddReward(0.001f);
                 }
                 else if (newNearestPelletDistance > lastNearestPelletDistance)
                 {
-                    AddReward(-0.002f);
+                    AddReward(-0.0002f);
                 }*/
 
-                // lastNearestPelletDistance = newNearestPelletDistance;
-                stepsSinceLastPellet++;
-                if (stepsSinceLastPellet > MaxStepsWithoutPellet)
-                {
-                    AddReward(-1f);
-                    EndEpisode();
-                    return;
-                }
+                //lastNearestPelletDistance = newNearestPelletDistance;
+                
+                // stepsSinceLastPellet++;
+                // if (stepsSinceLastPellet > MaxStepsWithoutPellet)
+                // {
+                //     AddReward(-5f);
+                //     EndEpisode();
+                //     return;
+                // }
+                // if (CountStep >= maxStepCount) // proche du Max Step = 3000
+                // {
+                //     AddReward(-5f);
+                //     EndEpisode();
+                //     return;
+                // }
             }
             else
             {
                 currentMoveDir = Vector3.zero;
-                AddReward(-0.01f);
-                Debug.Log("Move blocked by wall.");
+               // AddReward(-0.01f);
+               Debug.Log("Move blocked by wall.");
             }
         }
     }
+
+    
+
     void Update()
     {
         if (isMoving)
@@ -187,10 +243,12 @@ public class PacmanAgent : Agent
     {
         if (other.CompareTag("pacman_pellet") == true)
         {
-            HandlePelletCollected(other.gameObject, 10f, 10);
+            //HandlePelletCollected(other.gameObject, 10f, 10);
+            HandlePelletCollected(other.gameObject, 2f, 10);
         } else if (other.CompareTag("pacman_power_pellet") == true)
         {
-            if (HandlePelletCollected(other.gameObject, 50f, 50))
+            //if (HandlePelletCollected(other.gameObject, 50f, 50))
+            if (HandlePelletCollected(other.gameObject, 5f, 50))
             {
                 return;
             }
@@ -221,14 +279,16 @@ public class PacmanAgent : Agent
         {
             if (isPowerUpActive)
             {
-                AddReward(150f);
+                //AddReward(150f);
+                AddReward(8f);
                 score += multiplierScore * 200;
                 multiplierScore *= 2;
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
             }
             else
             {
-                AddReward(-200f);
+                //AddReward(-200f);
+                AddReward(-8f);
                 EndEpisode();
             }
         }
@@ -247,8 +307,10 @@ public class PacmanAgent : Agent
         if (allEaten)
         {
             Debug.Log($"All pellets eaten in {CountStep} steps!");
-            float WinReward = 1000f - (CountStep - 200);
-            AddReward(Mathf.Max(100f, WinReward)); 
+            //float WinReward = 1000f - (CountStep - 200);
+            //AddReward(Mathf.Max(100f, WinReward)); 
+            float speedBonus = Mathf.Max(0f, 5f - (CountStep / 500f));
+            AddReward(15f + speedBonus);
             EndEpisode();
             return true;
         }
@@ -271,70 +333,150 @@ public class PacmanAgent : Agent
         return new Vector2Int(Mathf.FloorToInt(worldPos.x), -Mathf.FloorToInt(worldPos.y));
     }
 
+// public override void CollectObservations(VectorSensor sensor)
+//     {
+//         int mapHeight = LevelData.MapHeight; // 11
+//         int mapWidth = LevelData.MapWidth;   // 21
+
+//         // 1. POSITION DE PAC-MAN (2 obs)
+//         // CRUCIAL : Puisque la carte est globale, l'agent doit savoir où IL se trouve dessus
+//         Vector2Int pacMap = WorldToMapCoords(transform.localPosition);
+//         sensor.AddObservation((float)pacMap.x / mapWidth);
+//         sensor.AddObservation((float)pacMap.y / mapHeight);
+
+//         // 2. LA GRILLE ENTIÈRE (11 * 21 = 231 obs)
+//         // On parcourt la grille de [0,0] à [mapHeight, mapWidth]
+//         for (int y = 0; y < mapHeight; y++)
+//         {
+//             for (int x = 0; x < mapWidth; x++)
+//             {
+//                 TileType cell = (TileType)LevelData.Map[y, x];
+//                 if (cell == TileType.Wall) 
+//                 {
+//                     sensor.AddObservation(0.33f);
+//                 }
+//                 else 
+//                 {
+//                     sensor.AddObservation(0f); // Vide ou déjà mangé
+//                 }
+//             }
+//         }
+//         // 3. POSITION DES PELLETS DISSOCIés DES MURS
+//         // for (int y = 0; y < mapHeight; y++)
+//         // {
+//         //     for (int x = 0; x < mapWidth; x++)
+//         //     {
+//         //         TileType cell = (TileType)LevelData.Map[y, x];
+//         //         if (cell == TileType.Pellet && IsPelletActive(x, y)) 
+//         //         {
+//         //             sensor.AddObservation(0.5f);
+//         //         }
+//         //         else if (cell == TileType.PowerPellet && IsPelletActive(x, y)) 
+//         //         {
+//         //             sensor.AddObservation(1f);
+//         //         }
+//         //         else 
+//         //         {
+//         //             sensor.AddObservation(0f); // Vide ou déjà mangé
+//         //         }
+//         //     }
+//         // }
+
+
+//         // 3. FANTÔMES (Position absolue normalisée + état de peur : 4 x 3 = 12 obs)
+//         for (int i = 0; i < 4; i++)
+//         {
+//             if (i < ghosts.Count && ghosts[i] != null)
+//             {
+//                 GameObject ghost = ghosts[i];
+//                 Vector2Int ghostMap = WorldToMapCoords(ghost.transform.localPosition);
+                
+//                 // Position absolue du fantôme sur la carte
+//                 sensor.AddObservation((float)ghostMap.x / mapWidth);
+//                 sensor.AddObservation((float)ghostMap.y / mapHeight);
+
+//                 GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
+//                 sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
+//             }
+//             else
+//             {
+//                 sensor.AddObservation(0f);
+//                 sensor.AddObservation(0f);
+//                 sensor.AddObservation(0f);
+//             }
+//         }
+
+//         // 4. DIRECTION ACTUELLE (2 obs)
+//         sensor.AddObservation(currentMoveDir.x); 
+//         sensor.AddObservation(currentMoveDir.y);
+
+//         // 5. INFOS GLOBALES (1 obs)
+//         sensor.AddObservation(GetPowerUpObservation());
+
+//         // 6. DIRECTION VERS LE PELLET LE PLUS PROCHE (2 obs) relative to pacman, normalized
+//         Vector2 nearestPelletDir = GetDirectionToNearestPellet();
+//         sensor.AddObservation(nearestPelletDir.x);
+//         sensor.AddObservation(nearestPelletDir.y);
+//     }
+
 public override void CollectObservations(VectorSensor sensor)
     {
-        int mapHeight = LevelData.MapHeight; // 11
-        int mapWidth = LevelData.MapWidth;   // 21
-
-        // 1. POSITION DE PAC-MAN (2 obs)
-        // CRUCIAL : Puisque la carte est globale, l'agent doit savoir où IL se trouve dessus
+        int mapHeight = LevelData.MapHeight;
+        int mapWidth  = LevelData.MapWidth;
         Vector2Int pacMap = WorldToMapCoords(transform.localPosition);
+
+        // --- 1. Position normalisée de Pac-Man (2 obs) ---
         sensor.AddObservation((float)pacMap.x / mapWidth);
         sensor.AddObservation((float)pacMap.y / mapHeight);
 
-        // 2. LA GRILLE ENTIÈRE (11 * 21 = 231 obs)
-        // On parcourt la grille de [0,0] à [mapHeight, mapWidth]
-        // for (int y = 0; y < mapHeight; y++)
-        // {
-        //     for (int x = 0; x < mapWidth; x++)
-        //     {
-        //         TileType cell = (TileType)LevelData.Map[y, x];
-        //         if (cell == TileType.Wall) 
-        //         {
-        //             sensor.AddObservation(0.33f);
-        //         }
-        //         else 
-        //         {
-        //             sensor.AddObservation(0f); // Vide ou déjà mangé
-        //         }
-        //     }
-        // }
-        // 3. POSITION DES PELLETS DISSOCIés DES MURS
-        for (int y = 0; y < mapHeight; y++)
+        // --- 2. Grille locale 5×5 centrée sur Pac-Man (25 obs) ---
+        // MODIF #9a : rayon 2 (5×5) au lieu de la carte entière (11×21)
+        // MODIF #9b : les pellets actifs sont maintenant encodés (0.66 / 1.0)
+        const int radius = 4;
+        for (int dy = -radius; dy <= radius; dy++)
         {
-            for (int x = 0; x < mapWidth; x++)
+            for (int dx = -radius; dx <= radius; dx++)
             {
-                TileType cell = (TileType)LevelData.Map[y, x];
-                if (cell == TileType.Pellet && IsPelletActive(x, y)) 
+                int mx = pacMap.x + dx;
+                int my = pacMap.y + dy;
+
+                if (mx < 0 || mx >= mapWidth || my < 0 || my >= mapHeight)
                 {
-                    sensor.AddObservation(0.5f);
+                    sensor.AddObservation(0.33f); // hors carte → mur
+                    continue;
                 }
-                else if (cell == TileType.PowerPellet && IsPelletActive(x, y)) 
+
+                TileType cell = (TileType)LevelData.Map[my, mx];
+
+                if (cell == TileType.Wall)
                 {
-                    sensor.AddObservation(1f);
+                    sensor.AddObservation(0.33f);
                 }
-                else 
+                else if ((cell == TileType.Pellet || cell == TileType.PowerPellet)
+                         && IsPelletActive(mx, my))
                 {
-                    sensor.AddObservation(0f); // Vide ou déjà mangé
+                    sensor.AddObservation(cell == TileType.PowerPellet ? 1f : 0.66f);
+                }
+                else
+                {
+                    sensor.AddObservation(0f); // vide ou pellet déjà mangé
                 }
             }
         }
 
-
-        // 3. FANTÔMES (Position absolue normalisée + état de peur : 4 x 3 = 12 obs)
+        // --- 3. Fantômes : position relative normalisée + état peur (4 × 3 = 12 obs) ---
+        // MODIF #9c : position RELATIVE (par rapport à Pac-Man) au lieu d'absolue
+        // → l'agent raisonne plus facilement en termes de "le fantôme est à droite"
         for (int i = 0; i < 4; i++)
         {
             if (i < ghosts.Count && ghosts[i] != null)
             {
-                GameObject ghost = ghosts[i];
-                Vector2Int ghostMap = WorldToMapCoords(ghost.transform.localPosition);
-                
-                // Position absolue du fantôme sur la carte
-                sensor.AddObservation((float)ghostMap.x / mapWidth);
-                sensor.AddObservation((float)ghostMap.y / mapHeight);
-
-                GhostFrightened frightened = ghost.GetComponent<GhostFrightened>();
-                sensor.AddObservation((frightened != null && frightened.enabled) ? 1f : 0f);
+                float relX = (ghosts[i].transform.localPosition.x - transform.localPosition.x) / mapWidth;
+                float relY = (ghosts[i].transform.localPosition.y - transform.localPosition.y) / mapHeight;
+                sensor.AddObservation(relX);
+                sensor.AddObservation(relY);
+                GhostFrightened f = ghosts[i].GetComponent<GhostFrightened>();
+                sensor.AddObservation((f != null && f.enabled) ? 1f : 0f);
             }
             else
             {
@@ -344,12 +486,29 @@ public override void CollectObservations(VectorSensor sensor)
             }
         }
 
-        // 4. DIRECTION ACTUELLE (2 obs)
-        sensor.AddObservation(currentMoveDir.x); 
+        // --- 4. Direction actuelle de Pac-Man (2 obs) ---
+        sensor.AddObservation(currentMoveDir.x);
         sensor.AddObservation(currentMoveDir.y);
 
-        // 5. INFOS GLOBALES (1 obs)
+        // --- 5. Power-up restant normalisé (1 obs) ---
         sensor.AddObservation(GetPowerUpObservation());
+
+        // 6. Direction + DISTANCE vers le pellet le plus proche (3 obs au lieu de 2)
+        Vector2 nearestPelletDir = GetDirectionToNearestPellet();
+        sensor.AddObservation(nearestPelletDir.x);
+        sensor.AddObservation(nearestPelletDir.y);
+
+        // NOUVEAU : distance normalisée — crucial pour savoir si le pellet est loin
+        float nearestDist = GetNearestPelletDistance(transform.localPosition);
+        float maxDist = Mathf.Sqrt(LevelData.MapWidth * LevelData.MapWidth 
+                                + LevelData.MapHeight * LevelData.MapHeight);
+        sensor.AddObservation(nearestDist / maxDist);
+
+        // 7. Pellets restants normalisés (1 obs)
+        int activePellets = pellets.FindAll(p => p != null && p.activeSelf).Count;
+        sensor.AddObservation((float)activePellets / pellets.Count);
+
+        // Total : 2 + 81 + 12 + 2 + 1 + 3 + 1 = 102 observations
     }
 
     private bool IsPelletActive(int mx, int my)

@@ -1,0 +1,114 @@
+using UnityEngine;
+using System.Collections.Generic;
+
+public class LevelData2
+{
+    public static int MapWidth => Map.GetLength(1);
+    public static int MapHeight => Map.GetLength(0);
+
+    public static readonly int[,] Map =
+    {
+        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+        {-1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  2, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  2, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  1,  1,  1,  1,  1,  1, -1, -1,  1,  1,  1,  1, -1, -1,  1,  1,  1,  1, -1, -1,  1,  1,  1,  1,  1,  1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  0, -1, -1,  0, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  0, -1, -1,  0, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1, -1, -1,  3,  3, -1, -1, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1,  0,  0,  0,  0,  0,  0, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1,  0,  0,  0, -1,  0,  0,  0,  0,  0,  0, -1,  0,  0,  0,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1,  0,  0,  0,  0,  0,  0, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1,  1, -1, -1,  0, -1, -1, -1, -1, -1, -1, -1, -1,  0, -1, -1,  1, -1, -1, -1, -1, -1, -1},
+        {-1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  1, -1, -1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1,  1, -1, -1, -1, -1,  1, -1},
+        {-1,  2,  1,  1, -1, -1,  1,  1,  1,  1,  1,  1,  1,  0,  0,  1,  1,  1,  1,  1,  1,  1, -1, -1,  1,  1,  2, -1},
+        {-1, -1, -1,  1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1,  1, -1, -1, -1},
+        {-1, -1, -1,  1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1,  1, -1, -1, -1},
+        {-1,  1,  1,  1,  1,  1,  1, -1, -1,  2,  1,  1,  1, -1, -1,  1,  1,  1,  2, -1, -1,  1,  1,  1,  1,  1,  1, -1},
+        {-1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1},
+        {-1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1, -1,  1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,  1, -1},
+        {-1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
+        {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1},
+    };
+
+    public static readonly Vector2Int PacmanStartPosition = new(13, 23);
+
+    public static readonly Dictionary<string, Vector2Int> GhostHomePositions = new()
+    {
+        { "Blinky", new(12,  14) },
+        { "Pinky", new(13,  14) },
+        { "Inky", new(14,  14) },
+        { "Clyde", new(15,  14) }
+    };
+
+    public static readonly Vector2Int HomeDoorPosition = new(13, 11);
+
+    public static readonly Dictionary<string, Vector3[]> GhostScatterTargets = new()
+    {
+        {
+            "Blinky",
+            new[]
+            {
+                new Vector3(26.5f, -0.5f, LevelGenerator.GhostZLayer),
+                new Vector3(26.5f, -5f, LevelGenerator.GhostZLayer),
+                new Vector3(21.5f, -5f, LevelGenerator.GhostZLayer),
+                new Vector3(21.5f, -0.5f, LevelGenerator.GhostZLayer)
+            }
+        },
+        {
+            "Pinky",
+            new[]
+            {
+                new Vector3(1.5f, -0.5f, LevelGenerator.GhostZLayer),
+                new Vector3(1.5f, -5f, LevelGenerator.GhostZLayer),
+                new Vector3(6.5f, -5f, LevelGenerator.GhostZLayer),
+                new Vector3(6.5f, -0.5f, LevelGenerator.GhostZLayer)
+            }
+        },
+        {
+            "Inky",
+            new[]
+            {
+                new Vector3(26.5f, -28.5f, LevelGenerator.GhostZLayer),
+                new Vector3(15.5f, -28.5f, LevelGenerator.GhostZLayer),
+                new Vector3(15.5f, -25.5f, LevelGenerator.GhostZLayer),
+                new Vector3(26.5f, -25.5f, LevelGenerator.GhostZLayer)
+            }
+        },
+        {
+            "Clyde",
+            new[]
+            {
+                new Vector3(1.5f, -25.5f, LevelGenerator.GhostZLayer),
+                new Vector3(1.5f,  18f, LevelGenerator.GhostZLayer),
+                new Vector3(12.5f, -25.5f, LevelGenerator.GhostZLayer),
+                new Vector3(12.5f, -28.5f, LevelGenerator.GhostZLayer)
+            }
+        }
+    };
+
+    public static readonly Vector3 ClydeNearPacmanFallbackTarget = new(1.5f, -25.5f, LevelGenerator.GhostZLayer);
+    public static readonly Vector3 InkyAvoidWorldPoint = Vector3.zero;
+    public const float InkyAvoidRadius = 0.5f;
+
+    public static readonly HashSet<string> ActiveGhosts = new() { "Blinky", "Pinky", "Inky", "Clyde" };
+
+    public enum TileType
+    {
+        Wall = -1,
+        Empty = 0,
+        Pellet = 1,
+        PowerPellet = 2,
+        GhostHouseDoor = 3
+    }
+}

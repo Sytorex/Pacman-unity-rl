@@ -21,7 +21,7 @@ public class GhostBase : MonoBehaviour
 
     public void ResetState()
     {
-        if (this.gameObject.name == "Blinky" || this.gameObject.name == "Clyde")
+        if (LevelData.ActiveGhosts.Contains(this.gameObject.name))
         {
             gameObject.SetActive(true);
         }

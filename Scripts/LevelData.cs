@@ -86,6 +86,9 @@ public class LevelData
     
     public static readonly Vector3 InkyAvoidWorldPoint = Vector3.zero;
     public const float InkyAvoidRadius = 0.5f;
+
+    // Liste des ghosts qu'on garde actifs (Blinky et Clyde)
+    public static readonly HashSet<string> ActiveGhosts = new() { "Blinky", "Clyde" };    
 }
 
 public enum TileType

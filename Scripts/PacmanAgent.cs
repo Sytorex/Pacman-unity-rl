@@ -152,9 +152,9 @@ public class PacmanAgent : Agent
         }
 
          Vector2Int currentGrid = WorldToMapCoords(transform.localPosition);
-        if (!IsPelletActive(currentGrid.x, currentGrid.y))
+        if (!IsPelletActive(currentGrid.x, currentGrid.y) && stepsSinceLastPellet > 5)
         {
-            AddReward(-0.002f); // case vide, pousse à explorer ailleurs
+            AddReward(-0.02f); // case vide, pousse à explorer ailleurs
         }
 
         CountStep++;

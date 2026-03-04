@@ -103,7 +103,9 @@ public class LevelDataHard
 
     public static readonly HashSet<string> ActiveGhosts = new() { "Blinky", "Pinky", "Inky", "Clyde" };
 
-    public enum TileType
+    
+}
+public enum TileType
     {
         Wall = -1,
         Empty = 0,
@@ -111,4 +113,3 @@ public class LevelDataHard
         PowerPellet = 2,
         GhostHouseDoor = 3
     }
-}

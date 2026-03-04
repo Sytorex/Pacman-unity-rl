@@ -492,8 +492,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 7
-  numberOfGamesY: 7
+  numberOfGamesX: 2
+  numberOfGamesY: 2
   spacing: 2
   gameXSize: 20
   gameYSize: 15
@@ -807,8 +807,8 @@ Rigidbody2D:
     serializedVersion: 2
     m_Bits: 0
   m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!114 &50331070295950073
 MonoBehaviour:
@@ -2318,8 +2318,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 43
-    NumStackedVectorObservations: 2
+    VectorObservationSize: 141
+    NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
       BranchSizes: 04000000
@@ -2411,8 +2411,8 @@ Rigidbody2D:
     serializedVersion: 2
     m_Bits: 64
   m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!114 &6324016560741368570
 MonoBehaviour:
@@ -2462,7 +2462,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  moveSpeed: 8
+  moveSpeed: 2
   levelGenerator: {fileID: 1346287886}
   wallLayer:
     serializedVersion: 2
@@ -2532,7 +2532,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 5
+  DecisionPeriod: 1
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
 --- !u!1 &6834668022667514553
@@ -2829,8 +2829,8 @@ Rigidbody2D:
     serializedVersion: 2
     m_Bits: 64
   m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_SleepingMode: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!1 &8313447529644925690
 GameObject:

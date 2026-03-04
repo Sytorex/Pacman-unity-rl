@@ -52,8 +52,7 @@ public class PacmanAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        
-        CountStep=0;
+        CountStep =0;
         nextAction = 0;
         currentMoveDir = Vector3.zero;
         isPowerUpActive = false;
@@ -127,6 +126,7 @@ public class PacmanAgent : Agent
         if (wantedDir != Vector3.zero && !Physics2D.Raycast(transform.localPosition, wantedDir, 1f, wallLayer))
         {
             currentMoveDir = wantedDir;
+            float angle = Mathf.Atan2(wantedDir.y, wantedDir.x) * Mathf.Rad2Deg;
             transform.eulerAngles = new Vector3(0, 0, rotation);
         }
 
@@ -135,7 +135,7 @@ public class PacmanAgent : Agent
             if (!Physics2D.Raycast(transform.localPosition, currentMoveDir, 1f, wallLayer))
             {
                 targetPosition = transform.localPosition + currentMoveDir;
-                
+                isMoving = true;
                 /*
                 float newNearestPelletDistance = GetNearestPelletDistance(targetPosition);
                 if (newNearestPelletDistance < lastNearestPelletDistance)
@@ -155,7 +155,6 @@ public class PacmanAgent : Agent
                     EndEpisode();
                     return;
                 }
-                StartCoroutine(SmoothMove());
             }
             else
             {
@@ -165,17 +164,23 @@ public class PacmanAgent : Agent
             }
         }
     }
-
-    System.Collections.IEnumerator SmoothMove()
+    void Update()
     {
-        isMoving = true;
-        while (Vector3.Distance(transform.localPosition, targetPosition) > 0.01f)
+        if (isMoving)
         {
+            // On avance vers la cible
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, moveSpeed * Time.deltaTime);
-            yield return null;
+
+            // Si on est arrivé (seuil très petit)
+            if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
+            {
+                transform.localPosition = targetPosition; // Snap parfait
+                isMoving = false; // On est prêt pour la prochaine Action
+
+                // OPTIONNEL : Demander une décision immédiatement après être arrivé
+                // RequestDecision(); 
+            }
         }
-        transform.localPosition = targetPosition;
-        isMoving = false;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -485,6 +490,24 @@ public override void CollectObservations(VectorSensor sensor)
         return minDistance == float.MaxValue ? 0f : minDistance;
     }
 
+    private GameObject GetNearestPellet(Vector3 fromPosition)
+    {
+        GameObject nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (GameObject pellet in pellets)
+        {
+            if (pellet == null || !pellet.activeSelf) continue;
+
+            float distance = Vector2.Distance(fromPosition, pellet.transform.localPosition);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = pellet;
+            }
+        }
+        return nearest;
+    }
     private float GetPowerUpObservation()
     {
         if (isPowerUpActive)

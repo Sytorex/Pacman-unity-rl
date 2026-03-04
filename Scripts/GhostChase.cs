@@ -40,14 +40,12 @@ public class GhostChase : GhostBehavior
             else if (ghostName == "Clyde")
                 ChooseNextMoveClyde();
         }
-        else
+        
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
+        if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
         {
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, speed * Time.deltaTime);
-            if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
-            {
-                transform.localPosition = targetPosition; // Snap to grid
-                isMoving = false;
-            }
+            transform.localPosition = targetPosition; // Snap to grid
+            isMoving = false;
         }
     }
 

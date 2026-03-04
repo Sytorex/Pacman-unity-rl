@@ -33,6 +33,7 @@ public class PacmanAgent : Agent
     // private const int VisionSize = VisionRadius * 2 + 1;
     private int CountStep = 0;
 
+
     public override void Initialize()
     {
         pellets = levelGenerator.GenerateLevel();
@@ -280,7 +281,7 @@ public class PacmanAgent : Agent
             if (isPowerUpActive)
             {
                 //AddReward(150f);
-                AddReward(8f);
+                AddReward(16f);
                 score += multiplierScore * 200;
                 multiplierScore *= 2;
                 other.GetComponent<GhostBehavior>().GetComponent<GhostFrightened>().Eaten();
@@ -288,7 +289,7 @@ public class PacmanAgent : Agent
             else
             {
                 //AddReward(-200f);
-                AddReward(-8f);
+                AddReward(-16f);
                 EndEpisode();
             }
         }

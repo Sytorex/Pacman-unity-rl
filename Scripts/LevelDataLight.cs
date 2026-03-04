@@ -88,13 +88,13 @@ public class LevelData
     public static readonly Vector3 InkyAvoidWorldPoint = Vector3.zero;
     public const float InkyAvoidRadius = 0.5f;
     public static readonly HashSet<string> ActiveGhosts = new() { "Blinky", "Clyde" };    
-}
 
-public enum TileType
-{
-    Wall = -1,
-    Empty = 0,
-    Pellet = 1,
-    PowerPellet = 2,
-    GhostHouseDoor = 3
+    public enum TileType
+    {
+        Wall = -1,
+        Empty = 0,
+        Pellet = 1,
+        PowerPellet = 2,
+        GhostHouseDoor = 3
+    }
 }

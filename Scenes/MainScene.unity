@@ -478,7 +478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1622239536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,8 +492,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 4
-  numberOfGamesY: 4
+  numberOfGamesX: 2
+  numberOfGamesY: 1
   spacing: 2
   gameXSize: 20
   gameYSize: 15
@@ -2329,12 +2329,12 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: c12d4e81b970af847bf237bb5d2f57d6, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 0
+  m_BehaviorType: 2
   m_BehaviorName: Pacman
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
-  m_DeterministicInference: 0
+  m_DeterministicInference: 1
   m_ObservableAttributeHandling: 0
 --- !u!58 &6037387783965171386
 CircleCollider2D:
@@ -2462,7 +2462,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  moveSpeed: 2
+  moveSpeed: 6
   levelGenerator: {fileID: 1346287886}
   wallLayer:
     serializedVersion: 2

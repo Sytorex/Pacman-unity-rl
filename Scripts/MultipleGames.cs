@@ -6,12 +6,13 @@ public class MultipleGames : MonoBehaviour
     public int numberOfGamesX = 3;
     public int numberOfGamesY = 3;
     public float spacing = 2f;
-    public float gameXSize = 28f; // Largeur de la grille de jeu
-    public float gameYSize = 31f; // Hauteur de la grille de jeu
     private GameObject[] games;
 
     void Start()
     {
+        float gameXSize = LevelData.MapWidth; // Largeur de la grille de jeu
+        float gameYSize = LevelData.MapHeight; // Hauteur de la grille de jeu
+
         gamePrefab.SetActive(false); // Désactive le prefab original
 
         games = new GameObject[numberOfGamesX * numberOfGamesY];

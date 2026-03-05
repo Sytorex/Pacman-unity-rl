@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class LevelData
+public class LevelDataMedium
 {
     public static int MapWidth => Map.GetLength(1);
     public static int MapHeight => Map.GetLength(0);
@@ -89,13 +89,4 @@ public class LevelData
 
     // Liste des ghosts qu'on garde actifs (Blinky et Clyde)
     public static readonly HashSet<string> ActiveGhosts = new() { "Blinky", "Clyde" }; 
-    
-    public enum TileType
-    {
-        Wall = -1,
-        Empty = 0,
-        Pellet = 1,
-        PowerPellet = 2,
-        GhostHouseDoor = 3
-    }
 }

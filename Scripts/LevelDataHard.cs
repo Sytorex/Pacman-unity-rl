@@ -105,11 +105,3 @@ public class LevelDataHard
 
     
 }
-public enum TileType
-    {
-        Wall = -1,
-        Empty = 0,
-        Pellet = 1,
-        PowerPellet = 2,
-        GhostHouseDoor = 3
-    }

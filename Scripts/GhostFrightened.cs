@@ -21,10 +21,7 @@ public class GhostFrightened : GhostBehavior
         eyes.enabled = false;
         blue.enabled = true;
         white.enabled = false;
-        //if (this.ghost.chase.enabled) isChase = true;
-        //this.ghost.chase.Disable();
-        //this.ghost.scatter.Disable();
-        //if(this.ghost.home.enabled)this.ghost.home.Enable(duration + 1f); // Ensure if ghost is home it stays home for the entire frightened duration
+
         Invoke(nameof(Flash), duration * 0.5f); // Flash halfway through the frightened duration
     }
 
@@ -36,9 +33,6 @@ public class GhostFrightened : GhostBehavior
         eyes.enabled = true;
         blue.enabled = false;
         white.enabled = false;
-
-        //if (isChase) this.ghost.chase.Enable();
-        //else this.ghost.scatter.Enable();
     }
 
     private void Flash()
@@ -64,8 +58,6 @@ public class GhostFrightened : GhostBehavior
 
         if (ghost.home.enabled)
         {
-            // no new Ghost gets out during frightened mode, but if a ghost is already in the home when frightened mode starts, it should stay there for the entire duration of frightened mode
-            //ghost.home.Enable(ghost.home.DefDuration + 8f);
             ghost.home.AddDuration(9f);
 
             return;
@@ -85,32 +77,14 @@ public class GhostFrightened : GhostBehavior
         else this.ghost.scatter.Enable();
     }
 
-    //public void Eaten()
-    //{
-    //    eaten = true;
-    //    body.enabled = false;
-    //    eyes.enabled = true;
-    //    blue.enabled = false;
-    //    white.enabled = false;
-
-    //    this.Disable();
-    //    Debug.Log(ghost.tag + " eaten! Returning to home.");
-    //    ghost.chase.Disable();
-    //    ghost.scatter.Disable();
-    //    this.ghost.home.Enable(8f);
-    //}
     public void Eaten()
     {
         eaten = true;
-
 
         // On coupe tout
         this.ghost.chase.Disable();
         this.ghost.scatter.Disable();
 
-        // On force le retour à la maison avec une durée fixe
-        //if(this.gameObject.name != "Blinky" && this.gameObject.name != "Pinky" && this.gameObject.name != "Inky" && this.gameObject.name != "Clyde") 
-        
         // Set active to false to stop all movement and interactions, but keep the object in the scene so it can be re-enabled when leaving home
         this.gameObject.SetActive(false);
         

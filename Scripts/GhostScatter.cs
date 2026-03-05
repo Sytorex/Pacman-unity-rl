@@ -35,7 +35,7 @@ public class GhostScatter : GhostBehavior
             if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
             {
                 isMoving = false;
-                //change target in assigned corner
+                // Change target in assigned corner
                 scatterTarget = scatterTargetList[Random.Range(0, scatterTargetList.Length)];
             }
         }
@@ -58,8 +58,7 @@ public class GhostScatter : GhostBehavior
         Vector3 bestDirection = Vector3.zero;
         float minDistance = float.MaxValue;
 
-        //if we dont see where pacman is, we will just stay afk
-        
+        // If we dont see where pacman is, we will just stay afk
 
         foreach (Vector3 dir in directions)
         {

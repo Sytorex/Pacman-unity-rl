@@ -492,8 +492,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamePrefab: {fileID: 1746154767}
-  numberOfGamesX: 4
-  numberOfGamesY: 4
+  numberOfGamesX: 1
+  numberOfGamesY: 2
   spacing: 2
 --- !u!4 &1622239537
 Transform:
@@ -2868,6 +2868,8 @@ MonoBehaviour:
   m_DetectableTags:
   - pacman_wall
   - pacman_ghost
+  - pacman_pellet
+  - pacman_power_pellet
   m_RaysPerDirection: 50
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0

@@ -2325,7 +2325,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 26e83514d2227c2459824f917ee4c72f, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 24fe1d16d0128114190e7b35175b195d, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 2
   m_BehaviorName: Pacman

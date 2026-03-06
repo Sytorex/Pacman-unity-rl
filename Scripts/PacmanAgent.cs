@@ -196,7 +196,7 @@ public class PacmanAgent : Agent
                 if (isPowerUpActive)
                 {
                     // On vérifie que le fantôme est bien effrayé et n'a pas déjà été mangé (état "yeux")
-                    if (frightened.enabled)
+                    if (frightened.enabled && !frightened.eaten)
                     {
                         AddReward(16f);
                         score += multiplierScore * 200;
@@ -209,7 +209,7 @@ public class PacmanAgent : Agent
                     {
                         // On vérifie que le fantôme n'est pas déjà en train de retourner à la base (état "yeux")
                         // car un fantôme "mangé" ne doit pas tuer Pacman sur le chemin du retour.
-                        if (true)
+                        if (!frightened.eaten)
                         {
                             AddReward(-16f);
                             EndEpisode();
@@ -356,6 +356,7 @@ public override void CollectObservations(VectorSensor sensor)
                 sensor.AddObservation(isPowerPellet);  // Canal 3 : Super pouvoir
             }
         }
+        // 3. Fantômes : position relative normalisée + état peur
         GameObject nearestGhost = GetNearestGhost();
         if (nearestGhost != null)
         {
@@ -369,25 +370,6 @@ public override void CollectObservations(VectorSensor sensor)
         {
             sensor.AddObservation(0f); sensor.AddObservation(0f); sensor.AddObservation(0f);
         }
-        // 3. Fantômes : position relative normalisée + état peur
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    if (i < ghosts.Count && ghosts[i] != null)
-        //    {
-        //        float relX = (ghosts[i].transform.localPosition.x - transform.localPosition.x) / mapWidth;
-        //        float relY = (ghosts[i].transform.localPosition.y - transform.localPosition.y) / mapHeight;
-        //        sensor.AddObservation(relX);
-        //        sensor.AddObservation(relY);
-        //        GhostFrightened f = ghosts[i].GetComponent<GhostFrightened>();
-        //        sensor.AddObservation((f != null && f.enabled) ? 1f : 0f);
-        //    }
-        //    else
-        //    {
-        //        sensor.AddObservation(0f);
-        //        sensor.AddObservation(0f);
-        //        sensor.AddObservation(0f);
-        //    }
-        //}
         
         // 4. Direction actuelle de Pac-Man
         sensor.AddObservation(currentMoveDir.x);

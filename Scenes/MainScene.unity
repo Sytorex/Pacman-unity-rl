@@ -495,8 +495,6 @@ MonoBehaviour:
   numberOfGamesX: 4
   numberOfGamesY: 4
   spacing: 2
-  gameXSize: 20
-  gameYSize: 9
 --- !u!4 &1622239537
 Transform:
   m_ObjectHideFlags: 0
@@ -561,7 +559,7 @@ GameObject:
   - component: {fileID: 1908745987}
   - component: {fileID: 1908745986}
   - component: {fileID: 1908745985}
-  m_Layer: 6
+  m_Layer: 3
   m_Name: Tilemap
   m_TagString: pacman_wall
   m_Icon: {fileID: 0}
@@ -1155,7 +1153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ghost: {fileID: 2591302928651387679}
   DefDuration: 8
-  speed: 4
+  speed: 3
   body: {fileID: 3643442117832949414}
   eyes: {fileID: 3360925751760982575}
   blue: {fileID: 3335262476092481027}
@@ -1527,7 +1525,7 @@ Transform:
   m_GameObject: {fileID: 8313447529644925690}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.83, y: -20.54, z: 0}
+  m_LocalPosition: {x: 12.25, y: -20.54, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1790,7 +1788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ghost: {fileID: 495028590046920520}
   DefDuration: 8
-  speed: 4
+  speed: 3
   body: {fileID: 1709259976800436977}
   eyes: {fileID: 832305580243136120}
   blue: {fileID: 820114886568976980}
@@ -2318,7 +2316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 102
+    VectorObservationSize: 375
     NumStackedVectorObservations: 2
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -2334,7 +2332,7 @@ MonoBehaviour:
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
-  m_DeterministicInference: 1
+  m_DeterministicInference: 0
   m_ObservableAttributeHandling: 0
 --- !u!58 &6037387783965171386
 CircleCollider2D:
@@ -2395,7 +2393,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8930928276714237678}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -2466,7 +2464,7 @@ MonoBehaviour:
   levelGenerator: {fileID: 1346287886}
   wallLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 8
   ghostObjects:
   - {fileID: 6834668022667514553}
   - {fileID: 547784953803947933}
@@ -2532,9 +2530,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a5c9d521e5ef4759a8246a07d52221e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DecisionPeriod: 5
+  DecisionPeriod: 10
   DecisionStep: 0
-  TakeActionsBetweenDecisions: 1
+  TakeActionsBetweenDecisions: 0
 --- !u!1 &6834668022667514553
 GameObject:
   m_ObjectHideFlags: 0
@@ -2552,7 +2550,7 @@ GameObject:
   - component: {fileID: 1894070397984601799}
   - component: {fileID: 50331070295950073}
   - component: {fileID: 8123388066530198889}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Blinky
   m_TagString: pacman_ghost
   m_Icon: {fileID: 0}
@@ -2813,7 +2811,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6834668022667514553}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -2869,18 +2867,18 @@ MonoBehaviour:
   m_SensorName: RayPerceptionSensor
   m_DetectableTags:
   - pacman_wall
+  - pacman_ghost
   - pacman_pellet
   - pacman_power_pellet
-  - pacman_ghost
-  m_RaysPerDirection: 2
+  m_RaysPerDirection: 50
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0
   m_RayLength: 30
   m_RayLayerMask:
     serializedVersion: 2
-    m_Bits: 471
-  m_ObservationStacks: 1
-  m_AlternatingRayOrder: 1
+    m_Bits: 478
+  m_ObservationStacks: 2
+  m_AlternatingRayOrder: 0
   m_UseBatchedRaycasts: 0
   rayHitColor: {r: 1, g: 0, b: 0, a: 1}
   rayMissColor: {r: 0.27440238, g: 1, b: 0, a: 1}
@@ -3116,7 +3114,7 @@ GameObject:
   - component: {fileID: 4567089088534858384}
   - component: {fileID: 2709573227247402670}
   - component: {fileID: 6166707454428363070}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Clyde
   m_TagString: pacman_ghost
   m_Icon: {fileID: 0}

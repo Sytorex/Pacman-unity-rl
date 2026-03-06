@@ -93,19 +93,32 @@ public class PacmanAgent : Agent
 
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
+        // Sécurité : on ne masque jamais si on n'est pas prêt
         if (!isReady) return;
 
         Vector3[] dirs = { Vector3.up, Vector3.down, Vector3.left, Vector3.right };
-        for (int action = 0; action < dirs.Length; action++)
+        int enabledActions = 0;
+
+        for (int i = 0; i < dirs.Length; i++)
         {
-            bool blocked = Physics2D.Raycast(transform.localPosition, dirs[action], 1f, wallLayer);
-            if (blocked)
+            // On réduit la portée du rayon pour ne pas détecter le mur 
+            // sur lequel on est peut-être "collé" à cause de l'OverlapCircle
+            float checkDistance = 0.6f;
+
+            // On part d'un point légèrement décalé vers la direction pour éviter le pivot central
+            Vector3 rayStart = transform.localPosition;
+
+            if (Physics2D.Raycast(rayStart, dirs[i], checkDistance, wallLayer))
             {
-                actionMask.SetActionEnabled(0, action, false);
+                actionMask.SetActionEnabled(0, i, false);
+            }
+            else
+            {
+                enabledActions++;
             }
         }
     }
-    
+
     public override void OnActionReceived(ActionBuffers actions)
     {
         if (isMoving || !isReady) return;
@@ -159,7 +172,6 @@ public class PacmanAgent : Agent
             else
             {
                 currentMoveDir = Vector3.zero;
-                Debug.Log("Move blocked by wall.");
             }
         }
     }
@@ -172,6 +184,40 @@ public class PacmanAgent : Agent
         {
             // On avance vers la cible
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, targetPosition, moveSpeed * Time.deltaTime);
+
+            Collider2D hitGhost = Physics2D.OverlapCircle(transform.position, 0.4f, LayerMask.GetMask("ghost"));
+            if (hitGhost != null)
+            {
+                GhostBase ghost = hitGhost.GetComponent<GhostBase>();
+                if (ghost == null) return;
+
+                GhostFrightened frightened = ghost.frightened;
+
+                if (isPowerUpActive)
+                {
+                    // On vérifie que le fantôme est bien effrayé et n'a pas déjà été mangé (état "yeux")
+                    if (frightened.enabled)
+                    {
+                        AddReward(16f);
+                        score += multiplierScore * 200;
+                        multiplierScore *= 2;
+
+                        ghost.frightened.Eaten();
+                    }
+
+                    else
+                    {
+                        // On vérifie que le fantôme n'est pas déjà en train de retourner à la base (état "yeux")
+                        // car un fantôme "mangé" ne doit pas tuer Pacman sur le chemin du retour.
+                        if (true)
+                        {
+                            AddReward(-16f);
+                            EndEpisode();
+                        }
+                    }
+                }
+                return;
+            }
 
             // Si on est arrivé (seuil très petit)
             if (Vector3.Distance(transform.localPosition, targetPosition) < 0.001f)
@@ -227,6 +273,7 @@ public class PacmanAgent : Agent
             }
             else
             {
+
                 AddReward(-16f);
                 EndEpisode();
             }
@@ -277,7 +324,7 @@ public override void CollectObservations(VectorSensor sensor)
         sensor.AddObservation((float)pacMap.y / mapHeight);
 
         // 2. Grille locale
-        const int radius = 4;
+        const int radius = 5;
         for (int dy = -radius; dy <= radius; dy++)
         {
             for (int dx = -radius; dx <= radius; dx++)
@@ -285,50 +332,63 @@ public override void CollectObservations(VectorSensor sensor)
                 int mx = pacMap.x + dx;
                 int my = pacMap.y + dy;
 
+                float isWall = 0f;
+                float isPellet = 0f;
+                float isPowerPellet = 0f;
+
                 if (mx < 0 || mx >= mapWidth || my < 0 || my >= mapHeight)
                 {
-                    sensor.AddObservation(0.33f); // hors carte → mur
-                    continue;
-                }
-
-                TileType cell = (TileType)LevelData.Map[my, mx];
-
-                if (cell == TileType.Wall)
-                {
-                    sensor.AddObservation(0.33f);
-                }
-                else if ((cell == TileType.Pellet || cell == TileType.PowerPellet)
-                         && IsPelletActive(mx, my))
-                {
-                    sensor.AddObservation(cell == TileType.PowerPellet ? 1f : 0.66f);
+                    isWall = 1f; // Hors carte = Mur
                 }
                 else
                 {
-                    sensor.AddObservation(0f); // vide ou pellet déjà mangé
+                    TileType cell = (TileType)LevelData.Map[my, mx];
+                    bool active = IsPelletActive(mx, my);
+
+                    if (cell == TileType.Wall) isWall = 1f;
+                    else if (cell == TileType.Pellet && active) isPellet = 1f;
+                    else if (cell == TileType.PowerPellet && active) isPowerPellet = 1f;
                 }
+
+                // On ajoute 3 observations PAR CELLULE
+                sensor.AddObservation(isWall);         // Canal 1 : Obstacle
+                sensor.AddObservation(isPellet);       // Canal 2 : Nourriture standard
+                sensor.AddObservation(isPowerPellet);  // Canal 3 : Super pouvoir
             }
         }
-
-        // 3. Fantômes : position relative normalisée + état peur
-        for (int i = 0; i < 4; i++)
+        GameObject nearestGhost = GetNearestGhost();
+        if (nearestGhost != null)
         {
-            if (i < ghosts.Count && ghosts[i] != null)
-            {
-                float relX = (ghosts[i].transform.localPosition.x - transform.localPosition.x) / mapWidth;
-                float relY = (ghosts[i].transform.localPosition.y - transform.localPosition.y) / mapHeight;
-                sensor.AddObservation(relX);
-                sensor.AddObservation(relY);
-                GhostFrightened f = ghosts[i].GetComponent<GhostFrightened>();
-                sensor.AddObservation((f != null && f.enabled) ? 1f : 0f);
-            }
-            else
-            {
-                sensor.AddObservation(0f);
-                sensor.AddObservation(0f);
-                sensor.AddObservation(0f);
-            }
+            Vector2 relPos = (nearestGhost.transform.localPosition - transform.localPosition);
+            sensor.AddObservation(relPos.x / mapWidth);
+            sensor.AddObservation(relPos.y / mapHeight);
+            GhostFrightened f = GetComponent<GhostFrightened>();
+            sensor.AddObservation((f != null && f.enabled) ? 1f : 0f);
         }
-
+        else
+        {
+            sensor.AddObservation(0f); sensor.AddObservation(0f); sensor.AddObservation(0f);
+        }
+        // 3. Fantômes : position relative normalisée + état peur
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    if (i < ghosts.Count && ghosts[i] != null)
+        //    {
+        //        float relX = (ghosts[i].transform.localPosition.x - transform.localPosition.x) / mapWidth;
+        //        float relY = (ghosts[i].transform.localPosition.y - transform.localPosition.y) / mapHeight;
+        //        sensor.AddObservation(relX);
+        //        sensor.AddObservation(relY);
+        //        GhostFrightened f = ghosts[i].GetComponent<GhostFrightened>();
+        //        sensor.AddObservation((f != null && f.enabled) ? 1f : 0f);
+        //    }
+        //    else
+        //    {
+        //        sensor.AddObservation(0f);
+        //        sensor.AddObservation(0f);
+        //        sensor.AddObservation(0f);
+        //    }
+        //}
+        
         // 4. Direction actuelle de Pac-Man
         sensor.AddObservation(currentMoveDir.x);
         sensor.AddObservation(currentMoveDir.y);
@@ -452,4 +512,26 @@ public override void CollectObservations(VectorSensor sensor)
             }
         }
     }
+    private GameObject GetNearestGhost()
+    {
+        GameObject nearest = null;
+        float minDistance = float.MaxValue;
+
+        foreach (GameObject ghostObj in ghosts)
+        {
+            if (ghostObj == null) continue;
+
+            // On calcule la distance entre Pacman et ce fantôme
+            float distance = Vector3.Distance(transform.localPosition, ghostObj.transform.localPosition);
+
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                nearest = ghostObj;
+            }
+        }
+
+        return nearest;
+    }
+   
 }
